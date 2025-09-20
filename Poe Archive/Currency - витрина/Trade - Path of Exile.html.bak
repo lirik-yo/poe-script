@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" class="wf-fontinregular-n4-active wf-active"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+  html {
+    transform: scale(2);
+    transform-origin: 0 0;
+    width: 50vw; /* Компенсируем увеличение, чтобы избежать горизонтального скролла */
+  }
+</style>
+</head>
+
+<body>
+<table width="100%">
+	<tr><th>Base Currency</th></tr>
+	<tr><td><div class="filter-title">Mirror of Kalandra</div></td></tr>
+	<tr><td><div class="filter-title">Mirror Shard</div></td></tr>
+	<tr><td><div class="filter-title">Hinekora's Lock</div></td></tr>
+	<tr><td><div class="filter-title">Veiled Exalted Orb</div></td></tr>
+	<tr><td><div class="filter-title">Fracturing Orb</div></td></tr>
+	
+	<tr><th>Currency - Report</th></tr>
+	<tr><td><div class="filter-title">Otherworldly Scouting Report</div></td></tr>
+	<tr><td><div class="filter-title">Delirious Scouting Report</div></td></tr>
+	<tr><td><div class="filter-title">Operative's Scouting Report</div></td></tr>
+	<tr><td><div class="filter-title">Blighted Scouting Report</div></td></tr>
+	<tr><td><div class="filter-title">Comprehensive Scouting Report</div></td></tr>
+	
+	<tr><th>Exotic - Ichor & Ember</th></tr>
+	
+	<tr><td><div class="filter-title">Exceptional Eldritch Ichor</div></td></tr>
+	<tr><td><div class="filter-title">Exceptional Eldritch Ember</div></td></tr>
+	
+	<tr><th>Exotic - Tainted</th></tr>
+	<tr><td><div class="filter-title">Tainted Exalted Orb</div></td></tr>
+	<tr><td><div class="filter-title">Tainted Divine Teardrop</div></td></tr>
+	
+	<tr><th>Exotic - Exalted</th></tr>
+	<tr><td><div class="filter-title">Crusader's Exalted Orb</div></td></tr>
+	<tr><td><div class="filter-title">Redeemer's Exalted Orb</div></td></tr>
+	<tr><td><div class="filter-title">Hunter's Exalted Orb</div></td></tr>
+	<tr><td><div class="filter-title">Warlord's Exalted Orb</div></td></tr>
+	<tr><td><div class="filter-title">Shaper's Exalted Orb</div></td></tr>
+	<tr><td><div class="filter-title">Elder's Exalted Orb</div></td></tr>
+	
+	<tr><td><div class="filter-title">Awakener's Orb</div></td></tr>
+	<tr><td><div class="filter-title">Orb of Dominance</div></td></tr>
+	
+	<tr><th>Exotic - Eldritch</th></tr>
+	<tr><td><div class="filter-title">Eldritch Chaos Orb</div></td></tr>
+	
+	
+	<tr><th>Exotic - Lifeforce</th></tr>
+	<tr><td><div class="filter-title">Sacred Crystallised Lifeforce</div></td></tr>
+	
+	<tr><th>Exotic - Enchanting</th></tr>
+	<tr><td><div class="filter-title">Tempering Orb</div></td></tr>
+	<tr><td><div class="filter-title">Tailoring Orb</div></td></tr>
+	
+	<tr><th>Exotic - Reflect</th></tr>
+	<tr><td><div class="filter-title">Reflecting Mist</div></td></tr>
+	
+	<tr><th>Exotic - New with Strand</th></tr>
+	<tr><td><div class="filter-title">Orb Of Remembrance</div></td></tr>
+	<tr><td><div class="filter-title">Orb Of Intention</div></td></tr>
+	  
+                            
+							
+	<tr><th>Catalyst</th></tr>
+	
+	<tr><td><div class="filter-title">Fertile Catalyst</div></td></tr>
+	
+	
+	<tr><th>Oil</th></tr>
+	<tr><td><div class="filter-title">Silver Oil</div></td></tr>
+	<tr><td><div class="filter-title">Golden Oil</div></td></tr>
+	<tr><td><div class="filter-title">Prismatic Oil</div></td></tr>
+	<tr><td><div class="filter-title">Tainted Oil</div></td></tr>
+	<tr><td><div class="filter-title">Reflective Oil</div></td></tr>
+	
+	<tr><th>Essence</th></tr>
+	<tr><td><div class="filter-title">Deafening Essence of Scorn</div></td></tr>
+	
+	<tr><td><div class="filter-title">Essence of Hysteria</div></td></tr>
+	<tr><td><div class="filter-title">Essence of Insanity</div></td></tr>
+	<tr><td><div class="filter-title">Essence of Horror</div></td></tr>
+	<tr><td><div class="filter-title">Essence of Delirium</div></td></tr>
+	
+	<tr><th>Delirium</th></tr>
+	<tr><td><div class="filter-title">Thaumaturge's Delirium Orb</div></td></tr>
+	<tr><td><div class="filter-title">Skittering Delirium Orb</div></td></tr>
+	<tr><td><div class="filter-title">Fossilised Delirium Orb</div></td></tr>
+	<tr><td><div class="filter-title">Diviner's Delirium Orb</div></td></tr>
+	<tr><td><div class="filter-title">Primal Delirium Orb</div></td></tr>
+			 	
+	<tr><th>Fossils</th></tr>
+	<tr><td><div class="filter-title">Tangled Fossil</div></td></tr>
+	<tr><td><div class="filter-title">Bloodstained Fossil</div></td></tr>
+	<tr><td><div class="filter-title">Glyphic Fossil</div></td></tr>
+	
+	<tr><td><div class="filter-title">Hollow Fossil</div></td></tr>
+	<tr><td><div class="filter-title">Fractured Fossil</div></td></tr>
+	
+	<tr><th>Allflame</th></tr>
+	<tr><td><div class="filter-title">Allflame Ember of Kulemak</div></td></tr>
+	<tr><td><div class="filter-title">Allflame Ember of Resplendence</div></td></tr>
+	<tr><td><div class="filter-title">Allflame Ember of Propagation</div></td></tr>
+	
+	<tr><td><div class="filter-title">Allflame Ember of Flesh</div></td></tr>
+	<tr><td><div class="filter-title">Allflame Ember of the Wildwood</div></td></tr>
+	<tr><td><div class="filter-title">Allflame Ember of the Ethereal</div></td></tr>
+	<tr><td><div class="filter-title">Allflame Ember of the Gilded</div></td></tr>
+	<tr><td><div class="filter-title">Allflame Ember of Toads</div></td></tr>
+	
+	<tr><th>Omens</th></tr>
+	<tr><td><div class="filter-title">Omen of Amelioration</div></td></tr>
+	<tr><td><div class="filter-title">Omen of Fortune</div></td></tr>
+	<tr><td><div class="filter-title">Omen of the Jeweller</div></td></tr>
+	<tr><td><div class="filter-title">Omen of Connections</div></td></tr>
+	<tr><td><div class="filter-title">Omen of Blanching</div></td></tr>
+	<tr><td><div class="filter-title">Omen of Brilliance</div></td></tr>
+	
+	<tr><th>Labs</th></tr>
+	<tr><td><div class="filter-title">Gift to the Goddess</div></td></tr>
+                            	
+	<tr><th>Elder Set</th></tr>
+	<tr><td><div class="filter-title">Fragment of Purification</div></td></tr>
+	<tr><td><div class="filter-title">Fragment of Enslavement</div></td></tr>
+	<tr><td><div class="filter-title">Fragment of Eradication</div></td></tr>
+	
+	
+	<tr><th>Shaper Set</th></tr>
+	<tr><td><div class="filter-title">Fragment of the Hydra</div></td></tr>
+	<tr><td><div class="filter-title">Fragment of the Phoenix</div></td></tr>
+	<tr><td><div class="filter-title">Fragment of the Minotaur</div></td></tr>
+	
+	
+	<tr><th>Elder+Shaper Set</th></tr>
+	<tr><td><div class="filter-title">Fragment of Terror</div></td></tr>
+	<tr><td><div class="filter-title">Fragment of Emptiness</div></td></tr>
+	
+	
+	<tr><th>Legion</th></tr>
+	<tr><td><div class="filter-title">Timeless Eternal Emblem</div></td></tr>
+	<tr><td><div class="filter-title">Timeless Karui Emblem</div></td></tr>
+	<tr><td><div class="filter-title">Timeless Vaal Emblem</div></td></tr>
+	<tr><td><div class="filter-title">Timeless Templar Emblem</div></td></tr>
+	<tr><td><div class="filter-title">Timeless Maraketh Emblem</div></td></tr>
+	
+	<tr><th>Hard Legion</th></tr>
+	<tr><td><div class="filter-title">Unrelenting Timeless Eternal Emblem</div></td></tr>
+	<tr><td><div class="filter-title">Unrelenting Timeless Karui Emblem</div></td></tr>
+	<tr><td><div class="filter-title">Unrelenting Timeless Vaal Emblem</div></td></tr>
+	<tr><td><div class="filter-title">Unrelenting Timeless Templar Emblem</div></td></tr>
+	<tr><td><div class="filter-title">Unrelenting Timeless Maraketh Emblem</div></td></tr>
+	
+		
+	<tr><th>Fragment 85</th></tr>
+	<tr><td><div class="filter-title">Awakening Fragment</div></td></tr>
+	<tr><td><div class="filter-title">Blazing Fragment</div></td></tr>
+	
+	<tr><td><div class="filter-title">Reality Fragment</div></td></tr>
+	<tr><td><div class="filter-title">Decaying Fragment</div></td></tr>
+	<tr><td><div class="filter-title">Devouring Fragment</div></td></tr>
+	<tr><td><div class="filter-title">Synthesising Fragment</div></td></tr>
+								
+	<tr><th>Echo</th></tr>
+	<tr><td><div class="filter-title">Echo of Loneliness</div></td></tr>
+	<tr><td><div class="filter-title">Echo of Trauma</div></td></tr>
+							
+	<tr><th>Other Fragments</th></tr>
+	<tr><td><div class="filter-title">An Audience With The King</div></td></tr>
+	<tr><td><div class="filter-title">Syndicate Medallion</div></td></tr>
+	<tr><td><div class="filter-title">Sacred Blossom</div></td></tr>
+	
+	<tr><td><div class="filter-title">Writhing Invitation</div></td></tr>
+	<tr><td><div class="filter-title">Screaming Invitation</div></td></tr>
+	<tr><td><div class="filter-title">Incandescent Invitation</div></td></tr>
+														
+	<tr><th>Breach Blessing</th></tr>
+	<tr><td><div class="filter-title">Blessing of Xoph</div></td></tr>
+	<tr><td><div class="filter-title">Blessing of Tul</div></td></tr>
+	<tr><td><div class="filter-title">Blessing of Esh</div></td></tr>
+	<tr><td><div class="filter-title">Blessing of Uul-Netol</div></td></tr>
+	
+	<tr><th>Breach Flawless</th></tr>
+	<tr><td><div class="filter-title">Xoph's Flawless Breachstone</div></td></tr>
+	<tr><td><div class="filter-title">Tul's Flawless Breachstone</div></td></tr>
+	<tr><td><div class="filter-title">Esh's Flawless Breachstone</div></td></tr>
+	<tr><td><div class="filter-title">Uul-Netol's Flawless Breachstone</div></td></tr>
+	<tr><td><div class="filter-title">Chayula's Flawless Breachstone</div></td></tr>
+	
+	<tr><th>Runegraft</th></tr>
+	<tr><td><div class="filter-title">Runegraft of the River</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of the Fortress</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of the Combatant</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of the Sinistral</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of the Bound</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of the Warp</div></td></tr>
+	
+	<tr><td><div class="filter-title">Runegraft of the Soulwick</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Bellows</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Gemcraft</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Blasphemy</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Time</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Treachery</div></td></tr>
+	
+	<tr><td><div class="filter-title">Runegraft of Quaffing</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Restitching</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Loyalty</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of the Witchmark</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of the Novamark</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Recompense</div></td></tr>
+	
+	<tr><td><div class="filter-title">Runegraft of the Jeweller</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of Stability</div></td></tr>
+	<tr><td><div class="filter-title">Runegraft of the Angler</div></td></tr>
+	
+	<tr><th>Scarabs 1</th></tr>
+	<tr><td><div class="filter-title">Divination Scarab of Pilfering</div></td></tr>
+	<tr><td><div class="filter-title">Harvest Scarab of Cornucopia</div></td></tr>
+	<tr><td><div class="filter-title">Kalguuran Scarab of Refinement</div></td></tr>
+	<tr><td><div class="filter-title">Domination Scarab of Terrors</div></td></tr>
+	
+	<tr><th>Scarabs 2</th></tr>
+	<tr><td><div class="filter-title">Blight Scarab of Invigoration</div></td></tr>
+	<tr><td><div class="filter-title">Breach Scarab of Resonant Cascade</div></td></tr>
+	<tr><td><div class="filter-title">Ultimatum Scarab of Dueling</div></td></tr>
+	<tr><td><div class="filter-title">Ultimatum Scarab of Catalysing</div></td></tr>
+	
+	
+	<tr><th>Horned Scarabs</th></tr>
+	<tr><td><div class="filter-title">Horned Scarab of Bloodlines</div></td></tr>
+	<tr><td><div class="filter-title">Horned Scarab of Preservation</div></td></tr>
+	<tr><td><div class="filter-title">Horned Scarab of Awakening</div></td></tr>
+	<tr><td><div class="filter-title">Horned Scarab of Tradition</div></td></tr>
+	<tr><td><div class="filter-title">Horned Scarab of Glittering</div></td></tr>
+	
+	<tr><th>Tattoo Strength</th></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ngamahu Firewalker</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ngamahu Shaman</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ngamahu Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ngamahu Warmonger</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ngamahu Woodcarver</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Kitava Blood Drinker</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Kitava Rebel</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Kitava Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Kitava Shaman</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tukohama Shaman</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tukohama Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tukohama Brawler</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tukohama Warmonger</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tukohama Warcaller</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Rongokurai Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Rongokurai Brute</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Rongokurai Goliath</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Rongokurai Guard</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tasalio Bladedancer</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Valako Shieldbearer</div></td></tr>
+	
+	<tr><th>Tattoo Dexterety</th></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tasalio Tideshifter</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tasalio Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tasalio Scout</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Arohongui Moonwarden</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Arohongui Scout</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Arohongui Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ramako Scout</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ramako Archer</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ramako Sniper</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ramako Fleetfoot</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Ramako Shaman</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tawhoa Naturalist</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tawhoa Scout</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tawhoa Herbalist</div></td></tr>
+	
+	<tr><th>Tattoo Intelligience</th></tr>
+	<tr><td><div class="filter-title">Tattoo of the Kitava Heart Eater</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Rongokurai Turtle</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tasalio Shaman</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Arohongui Warmonger</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Arohongui Shaman</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Hinekora Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Hinekora Deathwarden</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Hinekora Shaman</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Hinekora Storyteller</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Hinekora Warmonger</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tawhoa Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Tawhoa Shaman</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Valako Stormrider</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Valako Scout</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Valako Warrior</div></td></tr>
+	<tr><td><div class="filter-title">Tattoo of the Valako Shaman</div></td></tr>
+	
+	
+	<tr><th>Jorney Tattoo</th></tr>
+	<tr><td><div class="filter-title">Journey Tattoo of the Body</div></td></tr>
+	<tr><td><div class="filter-title">Journey Tattoo of the Mind</div></td></tr>
+	<tr><td><div class="filter-title">Journey Tattoo of the Soul</div></td></tr>
+	
+	
+	<tr><th>Divination Card Chapter 1</th></tr>
+	<tr><td><div class="filter-title">House of Mirrors</div></td></tr>
+	<tr><td><div class="filter-title">The Apothecary</div></td></tr>
+	<tr><td><div class="filter-title">Unrequited Love</div></td></tr>
+	<tr><td><div class="filter-title">Damnation</div></td></tr>
+	<tr><td><div class="filter-title">The Price of Devotion</div></td></tr>
+	<tr><td><div class="filter-title">Father's Love</div></td></tr>
+	<tr><td><div class="filter-title">History</div></td></tr>
+	<tr><td><div class="filter-title">The Insane Cat</div></td></tr>
+	<tr><td><div class="filter-title">Fire Of Unknown Origin</div></td></tr>
+	<tr><td><div class="filter-title">The Immortal</div></td></tr>
+	<tr><td><div class="filter-title">Brother's Gift</div></td></tr>
+	<tr><td><div class="filter-title">The Demon</div></td></tr>
+	
+	<tr><th>Divination Card Chapter 2</th></tr>
+	<tr><td><div class="filter-title">The Greatest Intentions</div></td></tr>
+	<tr><td><div class="filter-title">I See Brothers</div></td></tr>
+	<tr><td><div class="filter-title">Divine Justice</div></td></tr>
+	<tr><td><div class="filter-title">The Cheater</div></td></tr>
+	<tr><td><div class="filter-title">The Progeny of Lunaris</div></td></tr>
+	<tr><td><div class="filter-title">The Doctor</div></td></tr>
+	<tr><td><div class="filter-title">Seven Years Bad Luck</div></td></tr>
+	<tr><td><div class="filter-title">Choking Guilt</div></td></tr>
+	<tr><td><div class="filter-title">The Fiend</div></td></tr>
+	<tr><td><div class="filter-title">Wealth and Power</div></td></tr>
+	<tr><td><div class="filter-title">Luminous Trove</div></td></tr>
+	<tr><td><div class="filter-title">Love Through Ice</div></td></tr>
+	
+	<tr><th>Divination Card Chapter 3</th></tr>
+	<tr><td><div class="filter-title">Desecrated Virtue</div></td></tr>
+	<tr><td><div class="filter-title">The Endless Darkness</div></td></tr>
+	<tr><td><div class="filter-title">Auspicious Ambitions</div></td></tr>
+	<tr><td><div class="filter-title">Matryoshka</div></td></tr>
+	<tr><td><div class="filter-title">Squandered Prosperity</div></td></tr>
+	<tr><td><div class="filter-title">The Sephirot</div></td></tr>
+	<tr><td><div class="filter-title">Lonely Warrior</div></td></tr>
+	<tr><td><div class="filter-title">The Mayor</div></td></tr>
+	<tr><td><div class="filter-title">Succor of the Sinless</div></td></tr>
+	<tr><td><div class="filter-title">The Samurai's Eye</div></td></tr>
+	<tr><td><div class="filter-title">Divine Beauty</div></td></tr>
+	<tr><td><div class="filter-title">The Sacrifice</div></td></tr>
+	
+	<tr><th>Divination Card Chapter 4</th></tr>
+	<tr><td><div class="filter-title">The Enlightened</div></td></tr>
+	<tr><td><div class="filter-title">The Dragon's Heart</div></td></tr>
+	<tr><td><div class="filter-title">Imperfect Memories</div></td></tr>
+	<tr><td><div class="filter-title">The Artist</div></td></tr>
+	<tr><td><div class="filter-title">Broken Promises</div></td></tr>
+	<tr><td><div class="filter-title">Friendship</div></td></tr>
+	<tr><td><div class="filter-title">Last Stand</div></td></tr>
+	<tr><td><div class="filter-title">Brother's Stash</div></td></tr>
+	<tr><td><div class="filter-title">The Gulf</div></td></tr>
+	<tr><td><div class="filter-title">The Damned</div></td></tr>
+	<tr><td><div class="filter-title">The Nurse</div></td></tr>
+	<tr><td><div class="filter-title">Darker Half</div></td></tr>
+	
+	<tr><th>Divination Card Chapter 5</th></tr>
+	<tr><td><div class="filter-title">The Soul</div></td></tr>
+	<tr><td><div class="filter-title">Home</div></td></tr>
+	<tr><td><div class="filter-title">The Price of Loyalty</div></td></tr>
+	<tr><td><div class="filter-title">Gemcutter's Mercy</div></td></tr>
+	<tr><td><div class="filter-title">The World Eater</div></td></tr>
+	<tr><td><div class="filter-title">Duality</div></td></tr>
+	<tr><td><div class="filter-title">The Fortunate</div></td></tr>
+	<tr><td><div class="filter-title">The Destination</div></td></tr>
+	<tr><td><div class="filter-title">Beauty Through Death</div></td></tr>
+	<tr><td><div class="filter-title">Monochrome</div></td></tr>
+	<tr><td><div class="filter-title">The Emptiness</div></td></tr>
+	<tr><td><div class="filter-title">Winter's Embrace</div></td></tr>
+	
+	<tr><th>Divination Card Chapter 6</th></tr>
+	<tr><td><div class="filter-title">The Eye of Terror</div></td></tr>
+	<tr><td><div class="filter-title">The Long Con</div></td></tr>
+	<tr><td><div class="filter-title">Fateful Meeting</div></td></tr>
+	<tr><td><div class="filter-title">Remembrance</div></td></tr>
+	<tr><td><div class="filter-title">The Astromancer</div></td></tr>
+	<tr><td><div class="filter-title">The Rabbit's Foot</div></td></tr>
+	<tr><td><div class="filter-title">Doryani's Epiphany</div></td></tr>
+	<tr><td><div class="filter-title">The Eternal War</div></td></tr>
+	<tr><td><div class="filter-title">Chasing Risk</div></td></tr>
+	<tr><td><div class="filter-title">The Leviathan</div></td></tr>
+	<tr><td><div class="filter-title">The Shieldbearer</div></td></tr>
+	<tr><td><div class="filter-title">Burning Blood</div></td></tr>
+	
+	<tr><th>Divination Card Chapter 7</th></tr>
+	<tr><td><div class="filter-title">Lethean Temptation</div></td></tr>
+	<tr><td><div class="filter-title">Magnum Opus</div></td></tr>
+	<tr><td><div class="filter-title">The Chosen</div></td></tr>
+	<tr><td><div class="filter-title">Deadly Joy</div></td></tr>
+	<tr><td><div class="filter-title">Terrible Secret of Space</div></td></tr>
+	<tr><td><div class="filter-title">Assassin's Gift</div></td></tr>
+	<tr><td><div class="filter-title">The Enforcer</div></td></tr>
+	<tr><td><div class="filter-title">Tranquillity</div></td></tr>
+	<tr><td><div class="filter-title">The Bargain</div></td></tr>
+	<tr><td><div class="filter-title">A Familiar Call</div></td></tr>
+	<tr><td><div class="filter-title">A Fate Worse Than Death</div></td></tr>
+	<tr><td><div class="filter-title">A Stone Perfected</div></td></tr>
+	
+	<tr><th>Divination Card Chapter 8</th></tr>
+	<tr><td><div class="filter-title">Ambitious Obsession</div></td></tr>
+	<tr><td><div class="filter-title">Azyran's Reward</div></td></tr>
+	<tr><td><div class="filter-title">Eternal Bonds</div></td></tr>
+	<tr><td><div class="filter-title">Further Invention</div></td></tr>
+	<tr><td><div class="filter-title">Gift of Asenath</div></td></tr>
+	<tr><td><div class="filter-title">Judging Voices</div></td></tr>
+	<tr><td><div class="filter-title">Temperance</div></td></tr>
+	<tr><td><div class="filter-title">The Garish Power</div></td></tr>
+	<tr><td><div class="filter-title">The Hook</div></td></tr>
+	<tr><td><div class="filter-title">The Old Man</div></td></tr>
+	<tr><td><div class="filter-title">Who Asked</div></td></tr>
+</table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Находим все элементы с классом filter-title
+  const filterTitles = document.querySelectorAll('.filter-title');
+  
+  // Добавляем обработчик клика на каждый элемент
+  filterTitles.forEach(title => {
+    title.addEventListener('click', function() {
+      // Получаем только текстовое содержимое (без тегов)
+      const textContent = this.textContent || this.innerText;
+      
+      // Копируем в буфер обмена
+      navigator.clipboard.writeText(textContent.trim())
+        .then(() => {
+          console.log('Текст скопирован: ', textContent.trim());
+          // Можно добавить визуальное подтверждение (опционально)
+          this.style.backgroundColor = '#e0ffe0';
+          setTimeout(() => this.style.backgroundColor = '', 1000);
+        })
+        .catch(err => {
+          console.error('Ошибка копирования: ', err);
+        });
+    });
+  });
+});
+</script>
+
+
+
+</body>
+
+</html>
