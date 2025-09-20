@@ -1,0 +1,20 @@
+#Requires AutoHotkey v2.0
+OnClipboardChange ClipChanged
+ClipChanged(DataType) {
+	clip := A_Clipboard
+	If InStr(clip, "Rarity: "){
+		If InStr(clip, '"Infamous"')
+		{
+			SoundBeep 1000, 200
+			ToolTip "Potential Infamous Prefix`n" . clip , 0, 0
+			SetTimer () => ToolTip(), -3000
+			; MsgBox "Potential Infamous Prefix"
+		}
+		Else If InStr(clip, '"of Infamy"')
+		{
+			SoundBeep 1000, 200
+			ToolTip "Potential Infamous Suffix`n" . clip , 0, 0
+			SetTimer () => ToolTip(), -3000
+		}
+	}
+}

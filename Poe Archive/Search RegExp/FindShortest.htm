@@ -1,0 +1,378 @@
+<style>
+	table{
+		border: 1px solid black;
+		border-collapse: collapse;
+		width: 100%;
+		padding: 5px;
+	}
+	td, th, tr{
+		border: 1px solid black;
+		padding: 0;
+	}
+	textarea{
+		width: 100%;
+	}
+</style>
+<table>
+	<tr>
+		<th>
+		<label>Тип предмета:
+			<select id="itemTypeSelect">
+				<option value="" disabled selected>-- выбери тип --</option>
+				<option value="Amulet">Амулет</option>
+				<option value="Belt">Пояс</option>
+				<option value="Body Armour Dex Int">Нательный доспех (DEX/INT)</option>
+				<option value="Body Armour Dex">Нательный доспех (DEX)</option>
+				<option value="Body Armour Int">Нательный доспех (INT)</option>
+				<option value="Body Armour Str Dex">Нательный доспех (STR/DEX)</option>
+				<option value="Body Armour Str Int">Нательный доспех (STR/INT)</option>
+				<option value="Body Armour Str">Нательный доспех (STR)</option>
+				<option value="Boots Dex Int">Обувь (DEX/INT)</option>
+				<option value="Boots Dex">Обувь (DEX)</option>
+				<option value="Boots Int">Обувь (INT)</option>
+				<option value="Boots Str Dex">Обувь (STR/DEX)</option>
+				<option value="Boots Str Int">Обувь (STR/INT)</option>
+				<option value="Boots Str">Обувь (STR)</option>
+				<option value="Chaos Wand">Жезл хаоса</option>
+				<option value="Crossbow">Самострел</option>
+				<option value="Emerald">Изумруд</option>
+				<option value="Focus">Фокусы</option>
+				<option value="Gloves Dex Int">Перчатки (DEX/INT)</option>
+				<option value="Gloves Dex">Перчатки (DEX)</option>
+				<option value="Gloves Int">Перчатки (INT)</option>
+				<option value="Gloves Str Dex">Перчатки (STR/DEX)</option>
+				<option value="Gloves Str Int">Перчатки (STR/INT)</option>
+				<option value="Gloves Str">Перчатки (STR)</option>
+				<option value="Helmet Dex Int">Шлемы (DEX/INT)</option>
+				<option value="Helmet Dex">Шлемы (DEX)</option>
+				<option value="Helmet Int">Шлемы (INT)</option>
+				<option value="Helmet Str Dex">Шлемы (STR/DEX)</option>
+				<option value="Helmet Str Int">Шлемы (STR/INT)</option>
+				<option value="Helmet Str">Шлемы (STR)</option>
+				<option value="Mace Big">Двуручные булавы</option>
+				<option value="Mace">Булавы</option>
+				<option value="Ring">Кольцо</option>
+				<option value="Rubin">Рубин</option>
+				<option value="Saphire">Сапфир</option>				
+				<option value="Scepetre">Скипетры</option>
+				<option value="Shield Dex">Баклеры</option>
+				<option value="Shield Str Dex">Щиты (STR/DEX)</option>
+				<option value="Shield Str Int">Щиты (STR/INT)</option>
+				<option value="Shield Str">Щиты (STR)</option>
+				<option value="Spear">Копья</option>
+				<option value="Wand">Жезл</option>
+				<option value="Test">Эксперименты</option>
+			</select>
+		</label>
+		</th>
+		<th>Префиксы</th>
+		<th>Суффиксы</th>
+	</tr>
+	<tr>
+		<th>Запрос для craft of exile</th>
+		<td>
+			<textarea id="getAllPrefixes" rows="5" readonly>JSON.stringify([...document.querySelectorAll('#poecPrefixesCol .affix .label')]
+	.map(el => el.innerText
+		.replace(/\([^\)]*\)/g, '')// убираем скобки и содержимое
+		.replace(/#*/g, '')// убираем #
+		.replace(/[A-Za-z]*/g, '')// убираем латинские буквы
+		.replace(/\d+/g, '')// убираем числа
+		.replace(/[%–\-+]/g, '')// убираем проценты, тире, плюсы и минусы
+		.replace(/\s+/g, ' ')// убираем лишние пробелы
+		.trim()
+	)
+	.filter(txt => txt && !txt.includes('Total'))
+	.filter((v, i, a) => a.indexOf(v) === i))</textarea>
+		</td>
+		<td>			
+			<textarea id="getAllSuffixes" rows="5" readonly>JSON.stringify([...document.querySelectorAll('#poecSuffixesCol .affix .label')]
+	.map(el => el.innerText
+		.replace(/\([^\)]*\)/g, '')// убираем скобки и содержимое
+		.replace(/#*/g, '')// убираем #
+		.replace(/[A-Za-z]*/g, '')// убираем латинские буквы
+		.replace(/\d+/g, '')// убираем числа
+		.replace(/[%–\-+]/g, '')// убираем проценты, тире, плюсы и минусы
+		.replace(/\s+/g, ' ')// убираем лишние пробелы
+		.trim()
+	)
+	.filter(txt => txt && !txt.includes('Total'))
+	.filter((v, i, a) => a.indexOf(v) === i))</textarea>
+		</td>
+	</tr>
+	<tr>
+		<th>Все свойства</th>
+		<td>
+			<textarea id="allPrefixes" rows="5" cols="40">[]</textarea>
+		</td>
+		<td>			
+			<textarea id="allSuffixes" rows="5" cols="40">[]</textarea>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3" style="text-align: center;">
+			<button id="generateList">Сгенерируй списки</button>
+		</td>
+	</tr>
+	<tr>
+		<th>Нужные свойства</th>
+		<td>
+			<div id="prefix-list"></div>
+		</td>
+		<td>
+			<div id="suffix-list"></div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3" style="text-align: center;">
+			<button id="calculate">Рассчитать</button>
+		</td>
+	</tr>
+	<tr>
+		<th>Регулярка</th>
+		<td>
+			<span id="resultPrefix"></span>
+		</td>
+		<td>
+			<span id="resultSuffix"></span>
+		</td>
+	</tr>
+	<tr>
+		<th>Волшебный, хотя бы один</th>
+		<td colspan=2>
+			<span id="resultMagic"></span>
+		</td>
+	</tr>
+	<tr>
+		<th>Хотя бы два</th>
+		<td colspan=2>
+			<span id="resultTwo"></span>
+		</td>
+	</tr>
+</table>
+
+<script>
+const prefixArea = document.getElementById('allPrefixes');
+const suffixArea = document.getElementById('allSuffixes');
+const typeSelect = document.getElementById('itemTypeSelect');
+
+const defaultArray = ["Не готово!"];
+
+let allPrefixes = defaultArray;
+let allSuffixes = defaultArray;
+
+function getStorageKey(type, suffix) {
+	return `${type}_${suffix}`;
+}
+
+function saveCurrentData() {
+	const type = typeSelect.value;
+	saveCurrentDataForType(type);
+}
+function saveCurrentDataForType(type) {
+	if (!type || type === '') return; // Нечего загружать, если ничего не выбрано
+	
+	localStorage.setItem(getStorageKey(type, 'prefixes'), prefixArea.value);
+	localStorage.setItem(getStorageKey(type, 'suffixes'), suffixArea.value);
+
+	const checkedPrefixes = getChecked('prefix-list');
+	const checkedSuffixes = getChecked('suffix-list');
+
+	localStorage.setItem(getStorageKey(type, 'checkedPrefixes'), JSON.stringify(checkedPrefixes));
+	localStorage.setItem(getStorageKey(type, 'checkedSuffixes'), JSON.stringify(checkedSuffixes));
+}
+function loadDataForType(type) {
+	const p = localStorage.getItem(getStorageKey(type, 'prefixes'));
+	const s = localStorage.getItem(getStorageKey(type, 'suffixes'));
+	const checkedP = JSON.parse(localStorage.getItem(getStorageKey(type, 'checkedPrefixes')) || '[]');
+	const checkedS = JSON.parse(localStorage.getItem(getStorageKey(type, 'checkedSuffixes')) || '[]');
+
+	if (p && s) {
+		prefixArea.value = p;
+		suffixArea.value = s;
+
+		allPrefixes = JSON.parse(p);
+		allSuffixes = JSON.parse(s);
+	}else{
+		prefixArea.value = `${JSON.stringify(defaultArray)}`;
+		suffixArea.value = `${JSON.stringify(defaultArray)}`;
+		allPrefixes = defaultArray;
+		allSuffixes = defaultArray;
+	}
+	
+	renderCheckboxes('prefix-list', allPrefixes, checkedP);
+	renderCheckboxes('suffix-list', allSuffixes, checkedS);
+	
+	if (p && s) calcRegExp();
+}
+
+function escapeRegExp(str) {
+	return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function* generateRegexVariants(text) {
+	const escaped = escapeRegExp(text.trim());
+	yield new RegExp(`^${escaped}$`, 'i');
+	yield new RegExp(`\\b${escaped}\\b`, 'i');
+	yield new RegExp(escaped, 'i');
+}
+
+function findMinimalRegex(positives, negatives) {
+	if (positives.length === 0) return '❌ Нет выбранных свойств';
+
+	const escaped = positives.map(s => escapeRegExp(s.trim()));
+	const pattern = `(${escaped.join('|')})`;
+	const regex = new RegExp(pattern, 'i');
+
+	const allGood = positives.every(txt => regex.test(txt));
+	const allClean = negatives.every(txt => !regex.test(txt));
+
+	if (!allGood) return 'Нет регулярки';
+	if (!allClean) return `Ложно позитивное:${pattern}`;
+	return pattern;
+	return (allGood && allClean)
+		? `"${regex.source}"`
+		: '❌ Не удалось найти безопасную регулярку';
+}
+
+function generateRegexBySubstrings(positives, negatives, minLen = 3, maxLen = 15) {
+	// 1. Сбор всех подстрок из positive, которые не встречаются в negative
+	const safeSubstringsMap = new Map(); // строка P → множество безопасных подстрок
+
+	for (const p of positives) {
+		const substrings = new Set();
+		for (let i = 0; i < p.length; i++) {
+			for (let j = i + minLen; j <= p.length && j - i <= maxLen; j++) {
+				const sub = p.slice(i, j);
+				if (negatives.some(n => n.includes(sub))) continue;
+				substrings.add(sub);
+			}
+		}
+		safeSubstringsMap.set(p, substrings);
+	}
+
+	// 2. Жадный поиск покрытия
+	const coverage = new Map(); // подстрока → множество строк P, где она есть
+	for (const [p, subs] of safeSubstringsMap.entries()) {
+		for (const s of subs) {
+			if (!coverage.has(s)) coverage.set(s, new Set());
+			coverage.get(s).add(p);
+		}
+	}
+
+	const uncovered = new Set(positives);
+	const selectedSubstrings = [];
+
+	while (uncovered.size > 0) {
+		// отсортировать по: сначала по длине, потом по количеству строк
+		const candidates = [...coverage.entries()]
+			.map(([substr, coveredSet]) => {
+				const hits = [...coveredSet].filter(p => uncovered.has(p));
+				return { substr, hits };
+			})
+			.filter(e => e.hits.length > 0)
+			.sort((a, b) => {
+				return (a.substr.length * b.hits.length) - (b.substr.length * a.hits.length);
+				if (a.substr.length !== b.substr.length) return a.substr.length - b.substr.length;
+				return b.hits.length - a.hits.length;
+			});
+
+		if (candidates.length === 0) break;
+
+		const best = candidates[0];
+		selectedSubstrings.push(best.substr);
+		best.hits.forEach(p => uncovered.delete(p));	
+	}
+
+	if (selectedSubstrings.length === 0 || uncovered.size > 0) return '❌ Не удалось найти покрытие';
+
+	// 3. Финальная регулярка
+	if (selectedSubstrings.length === 1) {
+		return `"${selectedSubstrings[0]}"`;
+	} else {
+		const escaped = selectedSubstrings.map(s => escapeRegExp(s));
+		return `"${escaped.join('|')}"`;
+	}
+}
+
+function renderCheckboxes(containerId, items, checked = []) {
+	const container = document.getElementById(containerId);
+	container.innerHTML = items.map(item =>
+		`<label><input type="checkbox" value="${item}" ${checked.includes(item) ? 'checked' : ''}> ${item}</label><br>`
+	).join('');
+}
+
+function getChecked(containerId) {
+	return Array.from(document.querySelectorAll(`#${containerId} input:checked`)).map(cb => cb.value);
+}
+
+function calcRegExp(){
+	const selectedPrefixes = getChecked('prefix-list');
+	const selectedSuffixes = getChecked('suffix-list');
+	
+	const select = document.getElementById('itemTypeSelect');
+	const selectedText = select.selectedOptions[0].textContent;
+	const tags = [];
+
+	if (selectedText.includes('STR')) tags.push('бро');
+	if (selectedText.includes('DEX')) tags.push('укл');
+	if (selectedText.includes('INT')) tags.push('эне');
+	
+	const addInfo = tags.length==0
+		? ""
+		: (tags.length == 1 
+			? ` ${tags[0]}`
+			: ` (${tags.join('|')})`);
+
+	const other = [...allPrefixes.filter(x => !selectedPrefixes.includes(x)), ...allSuffixes.filter(x => !selectedSuffixes.includes(x))];
+
+	const prefixRegex = generateRegexBySubstrings(selectedPrefixes, other);
+	const suffixRegex = generateRegexBySubstrings(selectedSuffixes, other);
+
+	document.getElementById('resultPrefix').innerText = prefixRegex;
+	document.getElementById('resultSuffix').innerText = suffixRegex;
+	document.getElementById('resultMagic').innerText = `${selectedText.slice(0,3)} ${prefixRegex.slice(0, -1)}|${suffixRegex.slice(1)} вол${addInfo}`;
+	document.getElementById('resultTwo').innerText = `${selectedText.slice(0,3)} ${prefixRegex} ${suffixRegex}${addInfo}`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	renderCheckboxes('prefix-list', allPrefixes);
+	renderCheckboxes('suffix-list', allSuffixes);
+	
+	// Восстановление последнего выбранного типа
+	const lastType = localStorage.getItem('lastSelectedItemType');
+	if (lastType) {
+		const select = document.getElementById('itemTypeSelect');
+		select.value = lastType;
+		loadDataForType(lastType);
+	}
+	
+	document.getElementById('calculate').addEventListener('click', () => {
+		calcRegExp();
+	});
+	
+	document.getElementById('generateList').addEventListener('click', () => {
+		allPrefixes = JSON.parse(prefixArea.value || '[]');
+		allSuffixes = JSON.parse(suffixArea.value || '[]');
+		renderCheckboxes('prefix-list', allPrefixes);
+		renderCheckboxes('suffix-list', allSuffixes);
+	});
+	
+	typeSelect.addEventListener('change', (event) => {
+		const previousType = localStorage.getItem('lastSelectedItemType');
+		if (previousType && previousType !== '') {
+			saveCurrentDataForType(previousType);
+		}
+		
+		const newType = event.target.value;
+		if (newType && newType !== '') {
+			localStorage.setItem('lastSelectedItemType', newType);
+			loadDataForType(newType);
+		}
+	});
+	
+	// Сохранение при закрытии окна
+	window.addEventListener('beforeunload', function() {
+		saveCurrentData(); // Сохраняем текущего героя перед закрытием
+	});
+});
+</script>

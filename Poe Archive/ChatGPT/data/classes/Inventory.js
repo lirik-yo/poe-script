@@ -1,0 +1,41 @@
+class Inventory {
+  constructor(ownerId) {
+    this.ownerId = ownerId; // ID героя
+    this.slots = {}; // { slotName: itemId }
+  }
+
+  /**
+   * Назначить предмет в слот
+   * @param {string} slot - имя слота (например, 'head', 'body')
+   * @param {string} itemId - ID предмета
+   */
+  assignItem(slot, itemId) {
+    this.slots[slot] = itemId;
+    // Можно вызвать обновление UI или сохранить в БД
+  }
+
+  /**
+   * Удалить предмет из слота
+   * @param {string} slot
+   */
+  removeItem(slot) {
+    delete this.slots[slot];
+  }
+
+  /**
+   * Получить список всех предметов
+   * @returns {object}
+   */
+  getItems() {
+    return { ...this.slots };
+  }
+
+  /**
+   * Проверка, есть ли предмет в указанном слоте
+   * @param {string} slot
+   * @returns {boolean}
+   */
+  hasItem(slot) {
+    return !!this.slots[slot];
+  }
+}

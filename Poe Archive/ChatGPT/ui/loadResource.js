@@ -1,0 +1,12 @@
+function applyLocalization(locale) {
+	for (const [key, value] of Object.entries(locale)) {
+		const element = DomCache.Instance.get(`[data-i18n="${key}"]`);
+		if (element) {
+			element.textContent = value;
+		}
+	}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	LoadingBar.withLoading(()=>applyLocalization(window.locale));
+});

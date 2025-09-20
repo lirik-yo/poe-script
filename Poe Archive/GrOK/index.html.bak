@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Браузерный оценщик</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<!-- Плашка загрузки -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <h2>Загружается...</h2>
+            <div class="progress-bar">
+                <div id="progressBar" class="progress-bar-fill"></div>
+            </div>
+			<span id="LoadingHint">Здесь будут подсказки о том, как пользоваться этой программой</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="left-column">
+            <div class="input-section">
+                <textarea class="input-field" id="inputText" placeholder="Введите текст"></textarea>
+                <button onclick="addToList()">Добавить</button>
+				<input type="file" id="fileInput" accept=".json">
+				<button onclick="loadItemsFromFile()">Загрузить из файла</button>
+            </div>
+			<!-- <div class="file-upload"> -->
+			<!-- </div> -->
+            <div class="list-section">
+                <h3 id="typeNameItem">Список 2</h3>
+				<div class="scrollable-list">
+					<table id="tableItems"></table>
+				</div>
+            </div>
+        </div>
+        <div class="center-column">
+            <div class="controls">
+                <button id="prevBtn"><span class="arrow">←</span> Назад</button>
+                <span id="currentTitle">Текущее название</span>
+                <button id="nextBtn">Вперёд <span class="arrow">→</span></button>
+            </div>
+            <div class="list-section-property">
+				<button id="NextUndefined">Следующий необработанный</button>
+				<div class="scrollable-list">
+					<table id="tableProperties"></table>
+				</div>
+            </div>
+                <button id="deleteBtn" class="delete-btn">Удалить текущий</button>
+        </div>	
+		<div class=" right-column">
+			<div class="hero-section">
+				<div class="hero-controls">
+					<button id="prevHeroBtn"><span class="arrow">←</span> Предыдущий</button>
+					<span id="currentHeroTitle">Нет героев</span>
+					<button id="nextHeroBtn">Следующий <span class="arrow">→</span></button>
+				</div>
+				<div class="hero-name-input">
+					<input type="text" id="heroName" placeholder="Название героя">
+					<button onclick="addHero()">Добавить</button>
+				</div>
+				<textarea id="heroDescription" placeholder="Описание героя"></textarea>
+				<h3 id="percentWear"></h3> <!-- Таблица для одетых вещей-->
+				<div class="scrollable-list">
+					<table id="heroWearTable"></table>
+				</div> <!-- Таблица для одетых вещей-->
+				<button id="deleteHeroBtn" class="delete-btn">Удалить</button>
+			</div>
+		</div>
+    </div>
+	<div id="tooltip" class="tooltip" style="display:none">
+		<h3 id="tooltipNameHoverItam"></h3>
+		<div id="tooltipHoverItem"></div>
+		<table id="tableDifferenceProperty">
+		</table>
+	</div>
+    <script src="https://unpkg.com/brain.js" onerror="this.src='browser(brain).js';"></script>
+    <script src="script.js"></script>
+    <script src="trieNode.js"></script>
+    <!-- <script  type="module" src="workNeuron.js"></script> -->
+    <script src="workNeuron.js"></script>
+    <!-- <script type="module"src="workNeuron.js"></script> -->
+</body>
+</html>

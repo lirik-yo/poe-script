@@ -1,0 +1,145 @@
+const DB = (function () {
+	const DB_NAME = 'ItemComparatorDB';
+	const DB_VERSION = 1;
+
+	const HERO_STORE = 'heroes';
+	const ITEM_STORE = 'items';
+	const NEURON_STORE = 'neurons';
+
+	let _db = null;
+
+	/**
+	 * Открывает базу данных и создаёт хранилища при необходимости
+	 */
+	async function _openDB() {
+		if (_db) return _db;
+
+		return new Promise((resolve, reject) => {
+			const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+			request.onupgradeneeded = function (event) {
+				const db = event.target.result;
+
+				if (!db.objectStoreNames.contains(HERO_STORE)) {
+					db.createObjectStore(HERO_STORE, { keyPath: 'id' });
+				}
+
+				if (!db.objectStoreNames.contains(ITEM_STORE)) {
+					db.createObjectStore(ITEM_STORE, { keyPath: 'id' });
+				}
+				
+				if (!db.objectStoreNames.contains(NEURON_STORE)) {
+					db.createObjectStore(NEURON_STORE, { keyPath: 'id' });
+				}
+			};
+
+			request.onsuccess = function (event) {
+				_db = event.target.result;
+				resolve(_db);
+			};
+
+			request.onerror = function (event) {
+				reject(event.target.error);
+			};
+		});
+	}
+
+	/**
+	 * Универсальный метод записи
+	 */
+	async function _put(storeName, data) {
+		const db = await _openDB();
+		return new Promise((resolve, reject) => {
+			const tx = db.transaction([storeName], 'readwrite');
+			const store = tx.objectStore(storeName);
+			const req = store.put(data);
+
+			req.onsuccess = () => resolve(true);
+			req.onerror = () => reject(req.error);
+		});
+	}
+
+	/**
+	 * Универсальный метод удаления
+	 */
+	async function _delete(storeName, id) {
+		const db = await _openDB();
+		return new Promise((resolve, reject) => {
+			const tx = db.transaction([storeName], 'readwrite');
+			const store = tx.objectStore(storeName);
+			const req = store.delete(id);
+
+			req.onsuccess = () => resolve(true);
+			req.onerror = () => reject(req.error);
+		});
+	}
+
+	/**
+	 * Универсальный метод получения всех записей
+	 */
+	async function _getAll(storeName) {
+		const db = await _openDB();
+		return new Promise((resolve, reject) => {
+			const tx = db.transaction([storeName], 'readonly');
+			const store = tx.objectStore(storeName);
+			const req = store.getAll();
+
+			req.onsuccess = () => resolve(req.result);
+			req.onerror = () => reject(req.error);
+		});
+	}
+
+	/**
+	 * Работа с героями
+	 */
+	async function saveHero(hero) {
+		return _put(HERO_STORE, hero.toJSON());
+	}
+
+	async function deleteHero(id) {
+		return _delete(HERO_STORE, id);
+	}
+
+	async function getAllHeroes() {
+		return _getAll(HERO_STORE);
+	}
+
+	/**
+	 * Работа с предметами
+	 */
+	async function saveItem(item) {
+		return _put(ITEM_STORE, item.toJSON());
+	}
+
+	async function deleteItem(id) {
+		return _delete(ITEM_STORE, id);
+	}
+
+	async function getAllItems() {
+		return _getAll(ITEM_STORE);
+	}
+
+	/**
+	 * Работа с предметами
+	 */
+	async function saveNeuron(neuron) {
+		return _put(NEURON_STORE, neuron.toJSON());
+	}
+
+	async function deleteNeuron(id) {
+		return _delete(NEURON_STORE, id);
+	}
+
+	async function getAllNeurons() {
+		return _getAll(NEURON_STORE);
+	}
+
+	return {
+		saveHero,
+		deleteHero,
+		getAllHeroes,
+		saveItem,
+		deleteItem,
+		getAllItems,
+	};
+})();

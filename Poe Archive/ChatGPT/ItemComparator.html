@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Comparator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="flex h-screen">
+    <!-- Левая колонка -->
+    <div class="w-1/4 bg-white p-4 border-r border-gray-300 flex flex-col overflow-y-auto">
+      <h2 class="text-xl font-bold mb-2">Добавление предметов</h2>
+      <textarea id="item-text" class="w-full h-24 p-2 border border-gray-300 mb-2" placeholder="Вставьте описание предмета..."></textarea>
+      <button id="add-button" class="bg-blue-500 text-white px-4 py-2 rounded mb-2">Добавить</button>
+
+      <input id="file-input" type="file" accept="application/json" class="mb-2">
+      <button id="load-heroes" class="bg-purple-500 text-white px-4 py-2 rounded mb-2">Загрузить героев</button>
+
+      <h3 class="font-semibold mt-4">Фильтрация</h3>
+      <input id="filter-input" type="text" placeholder="Свойство..." class="w-full p-2 border border-gray-300 mb-2">
+      <select id="filter-mode" class="w-full p-2 border border-gray-300 mb-2">
+        <option value="has">Содержит</option>
+        <option value="min">Минимум</option>
+        <option value="max">Максимум</option>
+        <option value="range">Диапазон</option>
+      </select>
+      <button id="apply-filter" class="bg-green-500 text-white px-4 py-2 rounded mb-2">Применить фильтр</button>
+
+      <h3 class="font-semibold mt-4">Текущий предмет</h3>
+      <div id="current-item-info" class="text-sm mb-2">Название, тип...</div>
+      <button id="hide-button" class="bg-yellow-500 text-white px-4 py-2 rounded mb-2">Скрыть</button>
+      <button id="delete-button" class="bg-red-500 text-white px-4 py-2 rounded">Удалить текущий</button>
+
+      <h3 class="font-semibold mt-4">Похожие предметы</h3>
+      <div id="similar-items" class="text-xs text-gray-600">(Пока ничего нет)</div>
+    </div>
+
+    <!-- Центральная колонка -->
+    <div class="w-2/4 p-4 overflow-y-auto">
+      <h2 class="text-xl font-bold mb-4">Сравнение предметов</h2>
+      <div class="bg-gray-50 border border-dashed border-gray-400 rounded p-4 min-h-[300px] mb-4">
+        <p class="text-gray-500">Поле для перетаскивания предметов и рисования стрелок</p>
+        <button id="draw-arrow-button" class="bg-indigo-500 text-white px-4 py-1 rounded mt-2">Нарисовать стрелку</button>
+      </div>
+      <div class="bg-red-100 border border-red-300 p-2 rounded mb-4">
+        <p class="text-red-700">Список неподходящих предметов</p>
+      </div>
+      <div class="bg-yellow-100 border border-yellow-300 p-2 rounded mb-4">
+        <p class="text-yellow-700">Заглушка: отображение разных типов стрелок и вероятностей</p>
+      </div>
+    </div>
+
+    <!-- Правая колонка -->
+    <div class="w-1/4 bg-white p-4 border-l border-gray-300 flex flex-col overflow-y-auto">
+      <h2 class="text-xl font-bold mb-4">Герои</h2>
+      <button id="add-hero-button" class="bg-blue-400 text-white px-4 py-2 rounded mb-2">Добавить героя</button>
+      <button id="delete-hero-button" class="bg-red-400 text-white px-4 py-2 rounded mb-4">Удалить текущего</button>
+      <div class="mb-2">
+        <label class="block font-medium">Имя</label>
+        <input type="text" class="w-full p-2 border border-gray-300">
+      </div>
+      <div class="mb-2">
+        <label class="block font-medium">Описание</label>
+        <textarea class="w-full p-2 border border-gray-300"></textarea>
+      </div>
+      <div class="mb-2">
+        <label class="block font-medium">Слоты для предметов</label>
+        <p class="text-sm text-gray-600">например, 1 оружие, 2 брони...</p>
+      </div>
+      <div class="mb-2">
+        <label class="block font-medium">Инвентарь</label>
+        <div class="text-xs text-gray-600">(Пока пусто)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Строка состояния -->
+  <div id="status-bar" class="fixed bottom-0 w-full bg-gray-800 text-white p-2 text-sm">
+  	<s>Готов к работе.</s>
+	<br>
+	Что за TailwindCSS? 
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

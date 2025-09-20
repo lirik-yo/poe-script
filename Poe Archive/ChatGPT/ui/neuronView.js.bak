@@ -1,0 +1,20 @@
+(function(){
+	async function renderNeuronSummary() {
+		const currentType = State.CurrentItem?.type;
+		const summary = await getNeuronAnalysisSummary(currentType);
+
+		// const element = DomCache.Instance.get(`[data-i18n="${key}"]`);
+		
+		// const container = document.getElementById("tab-nav-neurons");
+		// container.innerText = `Нераспознанных строк: ${summary.badCurrentTypeCount} (в текущем типе) / ${summary.badTotalCount} (всего)`;
+
+		// 👇 При необходимости — сохранить в window для отладки
+		// window.__NeuronDebugInfo = summary;
+	}
+
+	window.renderNeuronSummary = renderNeuronSummary;
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+	LoadingBar.withLoading(()=>renderNeuronSummary());
+});

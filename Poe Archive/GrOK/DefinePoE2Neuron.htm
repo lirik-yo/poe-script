@@ -1,0 +1,764 @@
+<script src="https://unpkg.com/brain.js"></script>
+<script>
+//console.error
+//console.warn
+//console.log
+var DEBUG = true;
+var precisionOut = 3; 
+
+var arrayItem;//id/name - text
+
+var inputNeuron;//just list all Neuron
+
+class ItemSlotNet{
+	<!-- constructor(?){ -->
+	<!-- } -->
+	
+	trainingSet;//array of id/name ?Need?
+	hero;//array of id Hero
+	
+	tableOrder;//array[][] of hero and item id. Value - order for that hero.
+	
+	askingSet;//array of id new nextItem
+	
+	
+	<!-- class Rectangle { -->
+  <!-- constructor(height, width) { -->
+    <!-- this.height = height; -->
+    <!-- this.width = width; -->
+  <!-- } -->
+  <!-- // Getter -->
+  <!-- get area() { -->
+    <!-- return this.calcArea(); -->
+  <!-- } -->
+  <!-- // Method -->
+  <!-- calcArea() { -->
+    <!-- return this.height * this.width; -->
+  <!-- } -->
+  <!-- *getSides() { -->
+    <!-- yield this.height; -->
+    <!-- yield this.width; -->
+    <!-- yield this.height; -->
+    <!-- yield this.width; -->
+  <!-- } -->
+<!-- } -->
+
+<!-- const square = new Rectangle(10, 10); -->
+
+<!-- console.log(square.area); // 100 -->
+<!-- console.log([...square.getSides()]); // [10, 10, 10, 10] -->
+}
+
+
+
+var neuronInput = [];
+<!-- neuronInput.push(function(item){ return item % 2;});//--? -->
+<!-- neuronInput.push(function(item){ return (item >> 1) % 2;});//-?- -->
+<!-- neuronInput.push(function(item){ return (item >> 2) % 2;});//?-- -->
+
+
+function InputNeuronTo(obj){
+	var result = [];
+	neuronInput.forEach(x=>result.push(x(obj)));
+	return result;
+}
+
+function getInputNeuron()
+{
+	console.warn('Здесь нужно написать адекватные функции, которые поймут из теста - сколько хиточков, ловкости и т.д.');
+	var arr = [
+		function(item){ return item.indexOf('e');}, 
+		function(item){ return item.indexOf('a');}, 
+		function(item){ return item.indexOf('2');}
+	];
+	return arr;
+}
+
+neuronInput = getInputNeuron();
+
+function getItemPool()
+{
+	console.warn('Загрузка пула предметов из хранилища. Или создание базовыми наполнениями.');
+	return ['Test','Test2','2tt'];
+};
+
+
+
+function getLearningOrder(hero)
+{
+	console.warn('Сохранять и загружать в localStorage');
+	console.warn('И весь localStorage надо переписать на ident, чтобы места меньше занимало');
+	console.warn('И кеширование, чтобы быстрее работать через память');
+	console.warn('Вывод внизу информации о том, что сейчас занято по объёмам и по памяти.');
+	if (hero == 'AlisaInfernalA') return ['Test', 'Test2','2tt'];
+	if (hero == 'AlisaWitchhunterA') return ['Test2','2tt', 'Test'];
+	return ['Test','Test2','2tt'].sort(()=>Math.random()-0.5);
+}
+
+function getValueItemOrderByHero(item, hero){
+	return (1 - (getLearningOrder(hero).indexOf(item)+1)/(ItemPool.length + 1));
+}
+
+function getHeroPool()
+{
+	console.warn('Загрузка пула героев из хранилища? Или создание по умолчанию?');
+	console.warn('Два раза за один сеанс не выгружать');
+	return ['AlisaInfernalA','AlisaWitchhunterA'];
+	<!-- return ['AlisaInfernalA','AlisaWitchhunterA', 'AlisaAcolyteOfChayualaA','AlisaBloodMageA','AlisaChronomancer','AlisaDeadeya','','','','']; -->
+}
+	
+	
+var trainingObject = [];
+<!-- trainingObject.push(0); -->
+<!-- trainingObject.push(1); -->
+<!-- trainingObject.push(2); -->
+<!-- trainingObject.push(3); -->
+<!-- trainingObject.push(4); -->
+<!-- trainingObject.push(5); -->
+<!-- trainingObject.push(6); -->
+<!-- trainingObject.push(7);	 -->
+
+trainingObject = getItemPool();
+
+
+var resultExpect = [];
+<!-- resultExpect.push(function(item){ return 1*(item>0);});//OR -->
+<!-- resultExpect.push(function(item){ return 1*(item==7);});//AND -->
+<!-- resultExpect.push(function(item){ return 1*(item==1 || item==2 || item==4 || item==7);});//XOR -->
+
+
+resultExpect = getHeroPool().map(hero=>function(item){return getValueItemOrderByHero(item, hero);});
+
+
+function objectTrainingNeedResult(obj){
+	var result = [];
+	resultExpect.forEach(x=>result.push(x(obj)));
+	return result;
+}
+	
+function getTypeItem(item)
+{
+	console.warn('Посмотри, как опознавать, что это за предмет');		
+	console.warn('(доспех, голова, лук, двуручная булава и т.д.)');		
+	if (item.indexOf('2')*item.indexOf('t')>0) return 'TT';
+	return 'Test';
+}
+function getTypes(items)
+{
+	return 	Array.from(new Set(items.map(item=>getTypeItem(item))));
+}
+
+
+
+
+
+
+	function normaliziedFunction(x)
+	{		
+		if (DEBUG)
+			return x;
+		return 1.0 / (1 + Math.exp( -x ) );
+	}
+	
+	function shouldWeAddNeuronShift(){
+		console.warn('Собственно - определять эту штуку(нейрон смещения) и иметь возможность менять');
+		return true;
+	}
+	
+	function getNeuronWeightsByItemTypeAndHero(item, hero)
+	{
+		console.warn('Следующий шаг - для этой штуки смотреть в localStorage');
+		console.warn('В последнем слое только один принимающий нейрон - не плоди больше сущностей');
+		var type = getTypeItem(item);
+		var testResult = DictionaryHeuronWeights[type + hero];
+		if (testResult == undefined)
+		{
+			var countNeuronInRow = CountNeuron + (AdditionalNeuron?1:0);
+			testResult = Array.from(Array(CountLayer)).map((layer, indexLayer) =>
+				Array.from(Array(countNeuronInRow)).map(inputNeuron =>
+					Array.from(Array(countNeuronInRow-(AdditionalNeuron?1:0))).map((outputNeuron, indexOutputNeuron) =>{
+						if ((indexLayer == CountLayer-1) && (indexOutputNeuron > 0))
+							return 0;
+						return DEBUG
+						?(Math.round(Math.random()*10)/10)
+						:Math.random() //Потому что мы совершенно точно не знаем - какие веса нам нужны
+					})
+				)
+			);
+			DictionaryHeuronWeights[type + hero] = testResult;
+		}
+		return testResult;
+	}
+	
+	function getPreviousNeuron(item, hero)
+	{
+		console.warn('Между открытием страницы надо бы хранить предыдущий шаг и его подгружать сюда');
+		console.warn('Добавочный нейрон не имеет входящих весов - не плоди сущности');
+		console.warn('В последнем слое только один принимающий нейрон - не плоди больше сущностей');
+		var type = getTypeItem(item);
+		var testResult = DictionaryPreviousHeuronDelta[type + hero];
+		if (testResult == undefined)
+		{
+			var countNeuronInRow = CountNeuron + (AdditionalNeuron?1:0);
+			testResult = Array.from(Array(CountLayer)).map(layer =>
+				Array.from(Array(countNeuronInRow)).map(inputNeuron =>
+					Array.from(Array(countNeuronInRow)).map(outputNeuron =>
+						0 //Если создаём - значит не было предыдущих изменений
+					)
+				)
+			);
+			DictionaryPreviousHeuronDelta[type + hero] = testResult;
+		}
+		return testResult;
+	}
+	
+	function getCountLayer(){
+		console.warn('Получение количества слоёв нейронки и расчёт исходя из них');
+		return 3;
+	}
+	
+	function getCountNeuron(){
+		return InputNeurons.length;
+	}
+	
+	
+	function getSpeedLearning()
+	{
+		console.warn('Надо получать из localStorage скорость обучения нейронной сетки. Задание скорости обучения - она определяет на что множим градиент.');
+		return 0.1;
+	}
+	
+	function getMomentum()
+	{
+		console.warn('Надо получать из localStorage момент нейронной сетки - это величина, на что мы множим прошлый шаг изменения этого веса');
+		return 0.1;
+	}
+
+	function calcErrorItemHero(item, hero){
+		return getValueItemOrderByHero(item, hero)  //NeedValue
+			-ResultItemHero[ItemPool.indexOf(item)][HeroPool.indexOf(hero)]; //givenValue
+	}
+	
+	function calcErrorSet(typeItem, hero){
+		var testResult = DictionaryErrorSet[typeItem + hero];
+		if (testResult == undefined)
+		{
+			var filteredItem = ItemPool.filter(item => getTypeItem(item) == typeItem);
+			if (filteredItem.length == 0) return 0;
+			var sum = filteredItem.reduce((previousSum, currentItem)=>
+					previousSum + Math.pow(calcErrorItemHero(currentItem, hero),2)
+				, 0);
+			testResult = Math.sqrt(sum/filteredItem.length);
+			DictionaryErrorSet[typeItem + hero] = testResult;
+		}
+		return testResult;
+	}
+	
+	function justCalcValueAllNeuron(item, hero)
+	{
+		var tableWeight = getNeuronWeightsByItemTypeAndHero(item, hero);		
+		var neuronValue = Array.from(Array(CountLayer + 1)).map((layer, indexLayer) =>
+			Array.from(Array(CountNeuron + (AdditionalNeuron?1:0)))
+			//.map((value, indexValue) =>
+			//	0
+			//)
+		);
+		if (AdditionalNeuron){
+			neuronValue.forEach((layer)=>layer[CountNeuron] = 1);
+		}
+		neuronValue[CountLayer].splice(0);
+		InputNeurons.forEach((functionNeuron, indexNeuron)=>neuronValue[0][indexNeuron] = normaliziedFunction(functionNeuron(item)));
+		
+		for(var indexLayer = 0; indexLayer <CountLayer; indexLayer++){
+			for (var indexNeuron = 0; indexNeuron<CountNeuron; indexNeuron++){
+				if ((indexLayer == CountLayer - 1) && (indexNeuron >0))
+					continue;
+				neuronValue[indexLayer+1][indexNeuron] = normaliziedFunction(
+					neuronValue[indexLayer].reduce((previousSum, currentValueNeuron, indexInputNeuron)=>
+					previousSum + currentValueNeuron*tableWeight[indexLayer][indexInputNeuron][indexNeuron]
+					, 0)
+				);
+			}
+		}
+		console.log(item, hero, neuronValue, tableWeight);
+		
+		console.warn('Последний слой - выводящий и нам из него нужен только первый объект и там нет доп нейрона');
+		console.warn('Вывод ошибки в случае неизвестного типа предмета и вывод рандома');
+		console.warn('Расчёт исходя из них');
+		console.warn('Получение весов нейронки и расчёт исходя из них');
+		
+		return neuronValue;
+	}
+	
+	function calcDeltaNeuron(item, hero, neuronValue, tableWeight)
+	{
+		var countNeuronInRow = CountNeuron + (AdditionalNeuron?1:0);
+		var deltaNeuron = Array.from(Array(CountLayer + 1)).map((layer, indexLayer) =>
+			Array.from(Array(countNeuronInRow))
+		);
+		deltaNeuron[CountLayer].splice(0);
+		deltaNeuron[CountLayer][0] = (getValueItemOrderByHero(item,hero)- neuronValue[CountLayer][0]) * diffNormaliziedFunction(neuronValue[CountLayer][0]);
+		
+		for (var indexLayer = CountLayer; indexLayer >0; indexLayer --){
+			for (var indexNeuron = 0; indexNeuron < countNeuronInRow; indexNeuron++){
+				deltaNeuron[indexLayer-1][indexNeuron] = (DEBUG?1:diffNormaliziedFunction(neuronValue[indexLayer-1][indexNeuron]))
+					* deltaNeuron[indexLayer].reduce((previousSum, currentDeltaNeuron, indexDeltaNeuron)=>
+					{
+						if(AdditionalNeuron && (indexDeltaNeuron == countNeuronInRow-1)) return previousSum;
+						//if (indexLayer<CountLayer) 
+							//console.log('GGG: previousSum, currentDeltaNeuron, indexDeltaNeuron, indexLayer, indexNeuron', previousSum, currentDeltaNeuron, indexDeltaNeuron, indexLayer, indexNeuron, tableWeight, tableWeight[indexLayer-1], tableWeight[indexLayer-1][indexNeuron], tableWeight[indexLayer-1][indexNeuron][indexDeltaNeuron]);
+						return previousSum + tableWeight[indexLayer-1][indexNeuron][indexDeltaNeuron]*currentDeltaNeuron
+					}
+					, 0);
+				if (indexLayer<CountLayer) console.log('GOTCHA(deltaNeuron, neuronValue, tableWeight, indexLayer, indexNeuron)', deltaNeuron, neuronValue, tableWeight, indexLayer, indexNeuron, deltaNeuron[indexLayer-1][indexNeuron]);
+			}
+		}
+		return deltaNeuron;
+	}
+	
+	function calcValueAndBackLearn(item, hero)
+	{
+		var neuronValue = justCalcValueAllNeuron(item, hero);
+		var tableWeight = getNeuronWeightsByItemTypeAndHero(item, hero);	
+		
+		console.warn('Последний слой - выводящий и нам из него нужен только первый объект и там нет доп нейрона');
+		console.warn('Вывод ошибки в случае неизвестного типа предмета и вывод рандома');
+		console.warn('Расчёт исходя из них');
+		console.warn('Получение весов нейронки и расчёт исходя из них');
+		
+		console.error('Обратное распространение. Можно сразу в tableWeight - оно сработает.');	
+		var countNeuronInRow = CountNeuron + (AdditionalNeuron?1:0);
+		var deltaNeuron = Array.from(Array(CountLayer + 1)).map((layer, indexLayer) =>
+			Array.from(Array(countNeuronInRow))
+		);
+		deltaNeuron[CountLayer].splice(0);
+		deltaNeuron[CountLayer][0] = (getValueItemOrderByHero(item,hero)- neuronValue[CountLayer][0]) * diffNormaliziedFunction(neuronValue[CountLayer][0]);
+		
+		for (var indexLayer = CountLayer; indexLayer >0; indexLayer --){
+			for (var indexNeuron = 0; indexNeuron < countNeuronInRow; indexNeuron++){
+				deltaNeuron[indexLayer-1][indexNeuron] = (DEBUG?1:diffNormaliziedFunction(neuronValue[indexLayer-1][indexNeuron]))
+					* deltaNeuron[indexLayer].reduce((previousSum, currentDeltaNeuron, indexDeltaNeuron)=>
+					{
+						if(AdditionalNeuron && (indexDeltaNeuron == countNeuronInRow-1)) return previousSum;
+						//if (indexLayer<CountLayer) 
+							//console.log('GGG: previousSum, currentDeltaNeuron, indexDeltaNeuron, indexLayer, indexNeuron', previousSum, currentDeltaNeuron, indexDeltaNeuron, indexLayer, indexNeuron, tableWeight, tableWeight[indexLayer-1], tableWeight[indexLayer-1][indexNeuron], tableWeight[indexLayer-1][indexNeuron][indexDeltaNeuron]);
+						return previousSum + tableWeight[indexLayer-1][indexNeuron][indexDeltaNeuron]*currentDeltaNeuron
+						}
+						, 0);
+				if (indexLayer<CountLayer) console.log('GOTCHA(deltaNeuron, neuronValue, tableWeight, indexLayer, indexNeuron)', deltaNeuron, neuronValue, tableWeight, indexLayer, indexNeuron, deltaNeuron[indexLayer-1][indexNeuron]);
+			}
+		}
+		
+		var deltaNeuronF = calcDeltaNeuron(item, hero, neuronValue, neuronValue, tableWeight);
+		console.error(deltaNeuron, deltaNeuronF);
+		console.error('Здесь остановился');
+		
+		<!-- var Grad[a][b] = delta[b] * Out[a]; -->
+		
+		<!-- deltaInner = df(IN) * summ(wi * deltai); -->
+		<!-- tableWeight[0][0][0] = 0; -->
+		<!-- tableWeight[1][0][0] = 0; -->
+		<!-- tableWeight[0][1][0] = 0; -->
+		<!-- tableWeight[0][0][1] = 0; -->
+		
+		return neuronValue[CountLayer][0];
+		return Math.random();
+	}	
+	
+
+	
+	function diffNormaliziedFunction(x)
+	{
+		var functionRes = normaliziedFunction(x);
+		return (1-functionRes)*functionRes;
+	}
+	
+	function showTableResult()
+	{
+		var resultString = '';
+		resultString += '<table id="ResultItemHero" border = 1><tr><th>Вещи \ Герои</th>';
+		HeroPool.forEach((hero)=>resultString +='<th>' + hero + '</th>');
+		resultString +='</tr>';
+		ItemPool.forEach((item, itemIndex)=>{
+			resultString +='<tr>' + '<th>' + item + '</th>';
+			HeroPool.forEach((hero, heroIndex)=>
+				resultString +='<td>' + ResultItemHero[itemIndex][heroIndex] + '</td>'
+			);
+			resultString +='</tr>';
+		});
+		resultString +='<tr><th>Посчитанное</th>';
+		HeroPool.forEach((hero, heroIndex)=>{
+			resultString += '<td><ul>';
+			ItemPool.map((item, itemIndex)=>{
+				return {item:item, value:ResultItemHero[itemIndex][heroIndex]};
+			}).sort((aItem, bItem)=>bItem.value-aItem.value)
+			.forEach((itemValue)=>{
+				resultString += '<li>' + itemValue.item
+					+ '(' + itemValue.value + ')'
+					+ '</li>';
+			});
+			resultString += '</ul></td>';			
+		});
+		resultString +='</tr>';
+		resultString +='<tr><th>Обучение</th>';
+		HeroPool.forEach((hero)=>{
+			resultString += '<td><ul>';
+			getLearningOrder(hero).forEach((item)=>
+				resultString += '<li>'+ item
+					+ ' ('+ getValueItemOrderByHero(item,hero) +')'
+					+ '</li>'
+			);
+			resultString += '</ul></td>';
+		});
+		resultString +='</tr>';
+		resultString +='<tr><th colspan='+(HeroPool.length+1)+'>Ошибки</th></tr>';
+		getTypes().forEach((type)=>{
+			resultString += '<tr><th>' + type + '</th>';
+			HeroPool.forEach((hero)=>
+				resultString += '<td>' + calcErrorSet(type, hero) + '</td>'
+			);
+			resultString += '</tr>';
+		});
+		resultString += '</table>';
+		document.getElementById('placeForTable').innerHTML = resultString;
+	}
+	
+	<!-- function countValueEachItemHero(){ -->
+		<!-- ItemPool.forEach((item, indexItem, arrayItems)=>{ -->
+			<!-- HeroPool.forEach((hero, heroIndex, arrayHeroes)=>{ -->
+				<!-- ResultItemHero[indexItem][heroIndex] = calcValueAndBackLearn(item, hero); -->
+			<!-- }); -->
+		<!-- }); -->
+	<!-- } -->
+	
+
+	
+		var ItemPool = getItemPool();
+		var InputNeurons = getInputNeuron();
+	var HeroPool = getHeroPool();
+	var CountLayer = getCountLayer();
+	var CountNeuron = getCountNeuron();
+	var AdditionalNeuron = shouldWeAddNeuronShift();
+	var SpeedLearning = getSpeedLearning();
+	var Momentum = getMomentum();
+		
+	var DictionaryHeuronWeights = {};
+	var DictionaryPreviousHeuronDelta = {};
+	var DictionaryErrorSet = {};
+
+
+</script>
+
+<div id=placeForTable></div>
+Это заготовка нейронной сети.
+
+<script>
+	<!-- countValueEachItemHero(); -->
+	<!-- showTableResult();	 -->
+</script>
+
+<br>
+Читай:
+<br>
+<a href="https://habr.com/ru/articles/312450/">Начало(вроде выполнено)</a>
+<br>
+<a href="https://habr.com/ru/articles/313216/">Распространение ошибки обратно - градиенты, все дела</a>
+
+<br>
+Входные  данные.
+<ol>		
+	<li>
+	? Расчёт корректировок
+			<!-- var SpeedLearning = getSpeedLearning(); -->
+		<!-- var Momentum = getMomentum(); -->
+	</li>
+	<li>
+		? Хранение прошлых изменений(на 1 шаг минимум, для интереса - все шаги)
+		 <!-- getPreviousNeuron(item, hero) -->
+	</li>
+	<li>
+	? Задание новых весов под нейронку и их сохранение
+	</li>
+	<li>
+	? Пометить(кликом по одному элементу?) что его нужно сдвинуть вверх
+	</li>
+	<li>
+	? Показ предмета?
+	</li>
+	<li>
+	? Добавка нового предмета в пул оценки.
+	</li>
+	<li>
+	? Добавить автоматическую перезагрузку с подсчётом
+	</li>
+	<li>
+	? Добавь кнопку полного сброса всех весов и перезачитка настроек(и её автодействие, если поменялось число слоёв)
+	</li>
+	<li>
+	? Добавка предметов не в обучалку, а в тестирование, чтобы можно было глянуть - кому из героев больше подходит(если не первое место, то что? Может же быть несколько героев кандидатов...)
+	</li>
+	<li>
+	? Сделать замеры скорости и памяти - искать самые узкие места, чтобы потом их ужимать.
+	</li>
+	<li>
+	Выводи - размер ошибки от номера попытки(включая прошлые запуски)
+	</li>
+	<li>
+	? И для каждой нейронки мы сможем сказать - что мы носим сейчас и какая по этой штуке у нас соответственно минимальная плашка.
+	</li>
+	<li>
+	? Предметы распределять через ЧУМ, и фиксировать порядок после того, как закончим распределять.
+	</li>
+	<li>
+	? Добавить возможность указывать для эталона нулевое значение, а при расчёте таких предметов считать 0 и меньше - нулём.
+	</li>
+	<li>
+	? Добавить на 1 идеальный вариант предмета(миррорный уровень?)
+	</li>
+	<li>
+	? Раздели JS код на блоки - хранение/получение данных; обработка данных; представление данных.
+	</li>
+	<li>
+	? При запросе/добавке нового предмета - сравнивать с уже иммеющимеся эталонными.
+	</li>
+	<li>
+	? Иметь возможность выгрузить веса нейронки, чтобы этот код был отделим от меня.
+	</li>
+	<li>
+	? Учесть ограничение localStorage и самому следить за оставшимся местом. Возможно - base64 позволит хранить плотнее?
+	</li>
+</ol>
+<hr>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/synaptic/1.1.4/synaptic.js"></script>
+<script>
+<!-- var Neuron = synaptic.Neuron, -->
+	<!-- Layer = synaptic.Layer, -->
+	<!-- Network = synaptic.Network, -->
+	<!-- Trainer = synaptic.Trainer, -->
+	<!-- Architect = synaptic.Architect; -->
+	
+<!-- function Perception(input, hidden, output){ -->
+	<!-- //create the layers -->
+	<!-- var inputLayers = new Layer(input); -->
+	<!-- var hiddenLayer = new Layer(hidden); -->
+	<!-- var outputLayer = new Layer(output); -->
+	
+	<!-- //connect the layers -->
+	<!-- inputLayer.project(hiddenLayer); -->
+	<!-- hiddenLayer.project(outputLayer); -->
+	
+	<!-- //set the layers -->
+	<!-- this.set({ -->
+		<!-- input: inputLayer, -->
+		<!-- hidden: [hiddenLayer], -->
+		<!-- output: outputLayer -->
+	<!-- }); -->
+<!-- } -->
+
+<!-- //extend the prototype chain -->
+<!-- Perception.prototype = new Network(); -->
+<!-- Perception.prototype.constructor = Perception; -->
+</script>
+<hr>
+Test
+<hr>
+<hr>
+Test
+<div id="placeForBrainJSTable"></div>
+<script>
+	//lirik_yo Add:
+	
+	var trainingSet = [];
+	trainingObject.forEach(x=>trainingSet.push({name:x, input: InputNeuronTo(x), output:objectTrainingNeedResult(x)}));
+	<!-- trainingSet.push({ -->
+		<!-- input: [0,0], -->
+		<!-- output: [0] -->
+	<!-- }); -->
+	<!-- trainingSet.push({ -->
+		<!-- input: [0,2], -->
+		<!-- output: [1] -->
+	<!-- }); -->
+	<!-- trainingSet.push({ -->
+		<!-- input: [2,0], -->
+		<!-- output: [1] -->
+	<!-- }); -->
+	<!-- trainingSet.push({ -->
+		<!-- input: [2,2], -->
+		<!-- output: [0] -->
+	<!-- }); -->
+	
+	var calcSet = [];
+	<!-- calcSet.push([0,0]); -->
+	<!-- calcSet.push([0,1]); -->
+	<!-- calcSet.push([1,0]); -->
+	<!-- calcSet.push([1,1]); -->
+	<!-- calcSet.push([2,1]); -->
+	<!-- calcSet.push([2,0]); -->
+	<!-- calcSet.push([0.1,0]); -->
+	<!-- calcSet.push([0.2,0]); -->
+	<!-- calcSet.push([0.3,0]); -->
+	<!-- calcSet.push([0.4,0]); -->
+	<!-- calcSet.push([0.5,0]); -->
+	<!-- calcSet.push([0.6,0]); -->
+	<!-- calcSet.push([0.7,0]); -->
+	<!-- calcSet.push([0.8,0]); -->
+	<!-- calcSet.push([0.9,0]); -->
+	<!-- calcSet.push([1.0,0]); -->
+	<!-- calcSet.push([1.1,0]); -->
+	<!-- calcSet.push([2000,0]); -->
+	
+	calcSet.push({name:'TT',input:InputNeuronTo('TT')});
+	calcSet.push({name:'T2T',input:InputNeuronTo('T2T')});
+	calcSet.push({name:'aaat2T',input:InputNeuronTo('aaat2T')});
+	calcSet.push({name:'eee',input:InputNeuronTo('eee')});
+	
+	function equalArray(a,b){
+		if (a.length != b.length) return false;
+		console.log('equalArray',a,b);
+		for (var i = 0; i< a.length; i++)
+			if (a[i]!=b[i]) return false;
+		return true;
+	}
+	
+	function beautyShow(arr, n){
+		<!-- return arr.map(x=>x); -->
+		<!-- return arr.map(x=>x.toFixed(n)); -->
+		return Array.from(arr).map(x=>Math.round(x * Math.pow(10, n)) / Math.pow(10,n));
+	}
+	
+	beautyCalcSet = calcSet.filter(x=>!trainingSet.some(y=>equalArray(x,y.input)));
+	allCalcSet = trainingSet.concat(beautyCalcSet);
+	<!-- beatyCalcSet = calcSet.filter(x=>!trainingSet.some(y=>x==y.input)); -->
+	<!-- Array.from(new Set(ItemPool.map(item=>getTypeItem(item)))); -->
+	
+	// provide optional config object (or undefined). Defaults shown.
+	const config = {
+	  binaryThresh: 0.5, // ¯\_(ツ)_/¯
+	  hiddenLayers: [neuronInput.length + resultExpect.length], // array of ints for the sizes of the hidden layers in the network
+	  activation: 'sigmoid' // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh']
+	};
+
+	// create a simple feed forward neural network with backpropagation
+	const net = new brain.NeuralNetwork(config);
+
+	
+	net.train(
+		trainingSet,
+		{
+			log: detail => console.log(detail)
+		}
+	);
+	
+
+	var ResultItemHero = Array.from(Array(ItemPool.length)).map(x=>Array(HeroPool.length));
+	function countValueEachItemHero2(){
+		ItemPool.forEach((item, indexItem, arrayItems)=>{
+			var resNet = net.run(InputNeuronTo(item));
+			HeroPool.forEach((hero, heroIndex, arrayHeroes)=>{
+				ResultItemHero[indexItem][heroIndex] = resNet[heroIndex];
+			});
+		});
+	}
+	countValueEachItemHero2();
+	
+	var resultString = '';
+	resultString += '<table border=1>';
+	resultString += '<tr><th rowspan=2>Тип счёта \\ Данные</th>';
+	resultString += '<th colspan="' + trainingSet.length + '">TrainingData</th>';
+	resultString += '<th colspan="' + beautyCalcSet.length + '">CalcData</th></tr>';
+	resultString += '<tr>';
+	trainingSet.forEach(x=>{resultString += '<th>' + x.name + '</th>';});
+	beautyCalcSet.forEach(x=>{resultString += '<th>' + x + '</th>';});
+	resultString += '</tr>';
+	resultString += '<tr><th>Learning Result</th>';
+	trainingObject.forEach(x=>{resultString += '<th>' + x.output + '</th>';});	
+	resultString += '</tr>';
+	resultString += '<tr><th>Calcing Result</th>';
+	trainingSet.forEach(x=>{resultString += '<th>' + beautyShow(net.run(x.input), precisionOut) + '</th>';});	
+	beautyCalcSet.forEach(x=>{resultString += '<th>' + beautyShow(net.run(x.input), precisionOut) + '</th>';});	
+	resultString += '</tr>';	
+	resultString += '</table>';
+	
+	
+	
+	
+	resultString += '<table border=1>';
+	resultString += '<tr>';
+	resultString += '<th>Наборы \\ Герои</th>';
+	getHeroPool().forEach(hero=> resultString += '<th>' + hero + '</th>' );
+	resultString += '</tr>';
+	resultString += '<tr><th>Learning set</th>';	
+	getHeroPool().forEach(hero=>{
+		resultString += '<td><ul>';
+		getLearningOrder(hero).forEach((item)=>
+			resultString += '<li>' + item
+				+ ' (' + getValueItemOrderByHero(item,hero) + ')'
+				+ '</li>'
+		);
+		resultString += '</ul></td>';
+	});
+	
+	resultString += '';
+	resultString += '</tr>';
+	
+	resultString += '<tr><th>Calculated learning set</th>';
+	HeroPool.forEach((hero, heroIndex)=>{
+		resultString += '<td><ul>';
+		ItemPool.map((item, itemIndex)=>{
+			return {item:item, value:ResultItemHero[itemIndex][heroIndex]};
+		}).sort((aItem, bItem)=>bItem.value-aItem.value)
+		.forEach((itemValue)=>{
+			resultString += '<li>' + itemValue.item
+				+ '(' + itemValue.value + ')'
+				+ '</li>';
+		});
+		resultString += '</ul></td>';			
+	});
+	resultString += '';
+	resultString += '</tr>';
+	
+	
+	var typesList = getTypes(allCalcSet.map(x=>x.name));
+	
+	
+	resultString += '<tr><th>Calculated full set</th>';
+	HeroPool.forEach((hero, heroIndex)=>{
+		resultString += '<td><ul>';
+		allCalcSet.map((item, itemIndex)=>{
+			return {item:item.name, value:net.run(item.input)[heroIndex]};
+		}).sort((aItem, bItem)=>bItem.value-aItem.value)
+		.forEach((itemValue)=>{
+			resultString += '<li>' + itemValue.item
+				+ '(' + itemValue.value + ')'
+				+ '</li>';
+		});
+		resultString += '</ul></td>';			
+	});
+	resultString += '';
+	resultString += '</tr>';
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	resultString += '</table>';
+	
+	
+	document.getElementById('placeForBrainJSTable').innerHTML = resultString;
+	
+
+	<!-- const output = net.run([1, 0]); // [0.987] -->
+	<!-- const res = brain.likely([1,2], net); -->
+	
+	<!-- console.log(output, brain.likely([0,0], net),  brain.likely([1,1], net),  brain.likely([1,0], net),  brain.likely([0,1], net)); -->
+	<!-- console.log(net.run([0,0]), net.run([1,0]), net.run([0,1]), net.run([1,1]), net.run([2,1 ])); -->
+	
+	
+</script>
+<hr>
+Test

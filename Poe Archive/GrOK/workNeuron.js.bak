@@ -1,0 +1,1693 @@
+// Массив функций с названиями, каждая обрабатывает строку и возвращает false или число
+const neurons = [
+///Defence: 100
+///Attack: 200
+///Spell: 300
+///No combat: 400  
+  {
+    name: "Name Type",
+    func: (str) => {
+		return startsWithAnyTrieNode(str);
+    },
+    orderShow: 499,
+	orderNeuron: 0
+  },
+  {
+    name: "Rarity Digit",
+    func: (str) => {
+		const match = str.match(/(Rarity|Редкость):\s*(\S+)/);
+		if (!match) return false;
+		const mapRarity = new Map([
+			['Normal', 0],
+			['Обычный', 0],
+			['Magic', 1],
+			['Волшебный', 1],
+			['Rare', 2],
+			['Редкий', 2],
+			['Unique', 3]
+		]);
+		
+		return mapRarity.get(match[2]);
+    },
+	orderShow: 0,
+	orderNeuron: 401
+  },
+  {
+    name: "Rarity",
+    func: (str) => {
+		const match = str.match(/(Rarity|Редкость):\s*(\S+)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 401,
+	orderNeuron: 0
+  },
+  {
+    name: "Class Text",
+    func: (str) => {
+		const match = str.match(/Класс предмета: (.+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 0
+  },
+  {
+    name: "Requiment",
+    func: (str) => {
+		const match = str.match(/Требуется: (.+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 0
+  },
+  {
+    name: "Level Item",
+    func: (str) => {
+		const match = str.match(/Уровень предмета: (\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 0
+  },
+  
+  {
+    name: "Sockets",
+    func: (str) => {
+		const searchLine = 'Гнезда: ';
+		const index = str.indexOf(searchLine);
+		if (index == -1) return false;
+		// Извлекаем подстроку после фразы
+		
+		const substring = str.slice(index + searchLine.length);
+		const countS = (substring.match(/S/g) || []).length;
+		if (countS > 0) return countS;
+		return false;
+    },
+    orderShow: 400,
+	orderNeuron: 400
+  },
+  {
+    name: "Quality",
+    func: (str) => {
+		const match = str.match(/Качество: \+(\d+)%/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 402,
+	orderNeuron: 402
+  },
+  {
+    name: "Add spell",
+    func: (str) => {
+		const searchLine = 'Дарует умение: ';
+		const index = str.indexOf(searchLine);
+		if (index == -1) return false;
+		// Извлекаем подстроку после фразы
+		
+		const substring = str.slice(index + searchLine.length);
+		return substring;
+    },
+    orderShow: 410,
+	orderNeuron: 0
+  },
+  {
+    name: "Add spell Digit",
+    func: (str) => {
+		const searchLine = 'Дарует умение: ';
+		const index = str.indexOf(searchLine);
+		if (index == -1) return false;
+		// Извлекаем подстроку после фразы
+		
+		const substring = str.slice(index + searchLine.length);
+		return simpleHash(substring);
+    },
+    orderShow: 0,
+	orderNeuron: 410
+  },
+  {
+    name: "Add Rarity",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение редкости найденных предметов/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 420,
+	orderNeuron: 420
+  },
+  
+  
+  {
+    name: "Add Strength",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к силе/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 431,
+	orderNeuron: 431
+  },
+  {
+    name: "Add Dexterity",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к ловкости/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 433,
+	orderNeuron: 433
+  },
+  {
+    name: "Add Intelligence",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к интеллекту/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 435,
+	orderNeuron: 435
+  },
+   
+  
+  {
+    name: "Level Projectile",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уровню всех камней умений снарядов/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 451,
+	orderNeuron: 451
+  },
+  {
+    name: "Level Melee",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уровню всех камней умений ближнего боя/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 452,
+	orderNeuron: 452
+  },
+  {
+    name: "Level Minion",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уровню всех камней умений приспешников/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 453,
+	orderNeuron: 453
+  },
+  {
+    name: "Level Fire Spell",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уровню всех камней умений чар огня/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 454,
+	orderNeuron: 454
+  },
+  {
+    name: "Level Cold Spell",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уровню всех камней умений чар холода/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 455,
+	orderNeuron: 455
+  },
+  {
+    name: "Level Lightning Spell",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уровню всех камней умений чар молнии/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 456,
+	orderNeuron: 456
+  },
+  {
+    name: "Level Chaos Spell",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уровню всех камней умений чар хаоса/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 457,
+	orderNeuron: 457
+  },
+  {
+    name: "Level All Spell",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уровню всех камней умений чар$/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 458,
+	orderNeuron: 458
+  },
+  
+  
+  {
+    name: "Belts Charm",
+    func: (str) => {
+		let charms = 0;
+		const match1 = str.match(/Has (\d+) Charm Slot/);
+		if (match1)
+			charms += match1[1]*1;		
+		const match2 = str.match(/Ячейки оберегов: (\d+)/);
+		if (!match1 && !match2) return false;		
+		if (match2)
+			charms += match2[1]*1;
+		return charms;
+    },
+    orderShow: 440,
+	orderNeuron: 440
+  },
+  {
+    name: "Belts Flask Life",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение восстановления здоровья от флаконов/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 441,
+	orderNeuron: 441
+  },
+  {
+    name: "Belts Flask Mana",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение восстановления маны от флаконов/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 442,
+	orderNeuron: 442
+  },
+  
+  
+  {
+    name: "Movement Speed",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение скорости передвижения/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 480,
+	orderNeuron: 480
+  },
+  {
+    name: "Spirit",
+    func: (str) => {
+		const match = str.match(/Дух: (\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 481,
+	orderNeuron: 481
+  },
+  {
+    name: "Increase Spirit",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение духа/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 482,
+	orderNeuron: 482
+  },
+  
+  {
+    name: "Light Radius",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение радиуса обзора/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 490,
+	orderNeuron: 490
+  },
+   
+  
+  {
+    name: "Time Reload",
+    func: (str) => {
+		const match = str.match(/Время перезарядки: (\d+\.\d+)/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 201,
+	orderNeuron: 201
+  },  
+  {
+    name: "Bolt speed",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение скорости болта/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 202,
+	orderNeuron: 202
+  },
+  
+  
+  
+  {
+    name: "Attack per Second",
+    func: (str) => {
+		const match = str.match(/Атак в секунду: (\d+\.\d+)/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 283,
+	orderNeuron: 283
+  },
+  {
+    name: "Bonus Attack per Second",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение скорости атаки/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 285,
+	orderNeuron: 285
+  },
+  {
+    name: "Crit Weapon",
+    func: (str) => {
+		const match = str.match(/Шанс крит. попадания: (\d+\.\d+)%/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 260,
+	orderNeuron: 260
+  },
+  {
+    name: "Add Crit Weapon",
+    func: (str) => {
+		const match = str.match(/\+(\d+\.\d+)% к шансу критического удара/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 261,
+	orderNeuron: 261
+  },
+  {
+    name: "Add Crit Global",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение глобального шанса критического удара/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 263,
+	orderNeuron: 263
+  },
+  {
+    name: "Additional Stun",
+    func: (str) => {
+		const match = str.match(/Вызывает увеличенное на (\d+)% накопление оглушения/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 295,
+	orderNeuron: 295
+  },  
+  {
+    name: "Increase Duration Stun",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение длительности оглушения/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 296,
+	orderNeuron: 296
+  },  
+  {
+    name: "Phys Damage Text",
+    func: (str) => {
+		const match = str.match(/Физический урон: (\d+-\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 211,
+	orderNeuron: 0
+  },
+  {
+    name: "Phys Damage Min",
+    func: (str) => {
+		const match = str.match(/Физический урон: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 210
+  },
+  {
+    name: "Phys Damage Max",
+    func: (str) => {
+		const match = str.match(/Физический урон: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 211
+  },
+  {
+    name: "Additional Phys Damage Text",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+ до \d+) физического урона/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 214,
+	orderNeuron: 0
+  },
+  {
+    name: "Additional Phys Damage Min",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) физического урона/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 214
+  },
+  {
+    name: "Additional Phys Damage Max",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) физического урона/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 215
+  },
+  {
+    name: "Phys Damage Bonus",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение физического урона/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 212,
+	orderNeuron: 212
+  },
+  {
+    name: "Lightning Damage Text",
+    func: (str) => {
+		const match = str.match(/Урон от молнии: (\d+-\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 241,
+	orderNeuron: 0
+  },
+  {
+    name: "Lightning Damage Min",
+    func: (str) => {
+		const match = str.match(/Урон от молнии: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 240
+  },
+  {
+    name: "Lightning Damage Max",
+    func: (str) => {
+		const match = str.match(/Урон от молнии: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 241
+  },  
+  {
+    name: "Additional Lightning Damage Text",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+ до \d+) урона от молнии/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 244,
+	orderNeuron: 0
+  },
+  {
+    name: "Additional Lightning Damage Min",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) урона от молнии/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 244
+  },
+  {
+    name: "Additional Lightning Damage Max",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) урона от молнии/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 245
+  },
+  {
+    name: "Lightning Damage Bonus",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение урона от молнии/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 242,
+	orderNeuron: 242
+  },
+  {
+    name: "Lightning Additional Bonus",
+    func: (str) => {
+		const match = str.match(/Наносит (\d+)% урона в виде дополнительного урона от молнии/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 243,
+	orderNeuron: 243
+  },
+  
+  
+  
+  {
+    name: "Elemental Lightning Damage Text",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+-\d+) \(lightning\)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 246,
+	orderNeuron: 0
+  },
+  {
+    name: "Elemental Lightning Damage Min",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+)-(\d+) \(lightning\)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 246
+  },
+  {
+    name: "Elemental Lightning Damage Max",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+)-(\d+) \(lightning\)/);
+		if (!match) return false;
+		return match[3];
+    },
+    orderShow: 0,
+	orderNeuron: 247
+  },
+  
+  
+  
+  
+  
+  {
+    name: "Fire Damage Text",
+    func: (str) => {
+		const match = str.match(/Урон от огня: (\d+-\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 221,
+	orderNeuron: 0
+  },
+  {
+    name: "Fire Damage Min",
+    func: (str) => {
+		const match = str.match(/Урон от огня: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 220
+  },
+  {
+    name: "Fire Damage Max",
+    func: (str) => {
+		const match = str.match(/Урон от огня: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 221
+  },
+  {
+    name: "Additional Fire Damage Text",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+ до \d+) урона от огня/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 224,
+	orderNeuron: 0
+  },
+  {
+    name: "Additional Fire Damage Min",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) урона от огня/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 224
+  },
+  {
+    name: "Additional Fire Damage Max",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) урона от огня/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 225
+  },
+  {
+    name: "Fire Damage Bonus",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение урона от огня/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 222,
+	orderNeuron: 222
+  },
+  {
+    name: "Fire Additional Bonus",
+    func: (str) => {
+		const match = str.match(/Наносит (\d+)% урона в виде дополнительного урона от огня/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 223,
+	orderNeuron: 223
+  },
+  
+  {
+    name: "Elemental Fire Damage Text",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+)(\d+-\d+) \(fire\)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 226,
+	orderNeuron: 0
+  },
+  {
+    name: "Elemental Fire Damage Min",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+)(\d+)-(\d+) \(fire\)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 226
+  },
+  {
+    name: "Elemental Fire Damage Max",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+)(\d+)-(\d+) \(fire\)/);
+		if (!match) return false;
+		return match[3];
+    },
+    orderShow: 0,
+	orderNeuron: 227
+  },
+  {
+    name: "Cold Damage Text",
+    func: (str) => {
+		const match = str.match(/Урон от холода: (\d+-\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 231,
+	orderNeuron: 0
+  },
+  {
+    name: "Cold Damage Min",
+    func: (str) => {
+		const match = str.match(/Урон от холода: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 230
+  },
+  {
+    name: "Cold Damage Max",
+    func: (str) => {
+		const match = str.match(/Урон от холода: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 231
+  },  
+  {
+    name: "Additional Cold Damage Text",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+ до \d+) урона от холода/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 234,
+	orderNeuron: 0
+  },
+  {
+    name: "Additional Cold Damage Min",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) урона от холода/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 234
+  },
+  {
+    name: "Additional Cold Damage Max",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) урона от холода/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 235
+  },
+  {
+    name: "Cold Damage Bonus",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение урона от холода/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 232,
+	orderNeuron: 232
+  },
+  {
+    name: "Cold Additional Bonus",
+    func: (str) => {
+		const match = str.match(/Наносит (\d+)% урона в виде дополнительного урона от холода/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 233,
+	orderNeuron: 233
+  },
+  {
+    name: "Elemental Cold Damage Text",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+-\d+) \(cold\)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 236,
+	orderNeuron: 0
+  },
+  {
+    name: "Elemental Cold Damage Min",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+)-(\d+) \(cold\)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 236
+  },
+  {
+    name: "Elemental Cold Damage Max",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+)-(\d+) \(cold\)/);
+		if (!match) return false;
+		return match[3];
+    },
+    orderShow: 0,
+	orderNeuron: 237
+  },
+  {
+    name: "Chaos Damage Text",
+    func: (str) => {
+		const match = str.match(/Урон от хаоса: (\d+-\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 251,
+	orderNeuron: 0
+  },
+  {
+    name: "Chaos Damage Min",
+    func: (str) => {
+		const match = str.match(/Урон от хаоса: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 250
+  },
+  {
+    name: "Chaos Damage Max",
+    func: (str) => {
+		const match = str.match(/Урон от хаоса: (\d+)-(\d+)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 251
+  },
+  {
+    name: "Additional Chaos Damage Text",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+ до \d+) урона от хаоса/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 254,
+	orderNeuron: 0
+  },
+  {
+    name: "Additional Chaos Damage Min",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) урона от хаоса/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 254
+  },
+  {
+    name: "Additional Chaos Damage Max",
+    func: (str) => {
+		const match = str.match(/Добавляет от (\d+) до (\d+) урона от хаоса/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 255
+  },
+  {
+    name: "Chaos Damage Bonus",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение урона от хаоса/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 252,
+	orderNeuron: 252
+  },
+  {
+    name: "Chaos Additional Bonus",
+    func: (str) => {
+		const match = str.match(/Наносит (\d+)% урона в виде дополнительного урона от хаоса/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 253,
+	orderNeuron: 253
+  },
+  {
+    name: "Elemental Chaos Damage Text",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+-\d+) \(chaos\)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 256,
+	orderNeuron: 0
+  },
+  {
+    name: "Elemental Chaos Damage Min",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+)-(\d+) \(chaos\)/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 256
+  },
+  {
+    name: "Elemental Chaos Damage Max",
+    func: (str) => {
+		const match = str.match(/Урон от стихий:(.+) (\d+)-(\d+) \(chaos\)/);
+		if (!match) return false;
+		return match[3];
+    },
+    orderShow: 0,
+	orderNeuron: 257
+  },
+  
+  
+  {
+    name: "Add Accuracy",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к меткости/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 271,
+	orderNeuron: 271
+  },
+  {
+    name: "Distance Attack",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение дальности ударов этим оружием в ближнем бою/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 275,
+	orderNeuron: 275
+  },
+  {
+    name: "Bonus Damage Elemental Attack",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение урона от стихий от умений атак/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 277,
+	orderNeuron: 277
+  },
+  
+  
+  {
+    name: "Health per Kill",
+    func: (str) => {
+		const match = str.match(/Дарует (\d+) здоровья за каждого убитого врага/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 291,
+	orderNeuron: 291
+  },
+  {
+    name: "Mana per Kill",
+    func: (str) => {
+		const match = str.match(/Дарует (\d+) маны за каждого убитого врага/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 293,
+	orderNeuron: 293
+  },
+  
+  
+  
+  {
+    name: "Thorns Text",
+    func: (str) => {
+		const match = str.match(/От (\d+ до \d+) физического урона шипами/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 101,
+	orderNeuron: 0
+  },
+  {
+    name: "Thorns Min",
+    func: (str) => {
+		const match = str.match(/От (\d+) до (\d+) физического урона шипами/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 100
+  },
+  {
+    name: "Thorns Max",
+    func: (str) => {
+		const match = str.match(/От (\d+) до (\d+) физического урона шипами/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 101
+  },
+  
+  {
+    name: "Armour",
+    func: (str) => {
+		const match = str.match(/Броня: (\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 110,
+	orderNeuron: 110
+  },
+  {
+    name: "Additional Armour",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к броне/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 111,
+	orderNeuron: 111
+  },
+  {
+    name: "Additional Percent Armour",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение брони/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 112,
+	orderNeuron: 112
+  },  
+  {
+    name: "Additional2 Percent Armour",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение(.+)брони/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 113,
+	orderNeuron: 113
+  },
+  
+  {
+    name: "Evasion",
+    func: (str) => {
+		const match = str.match(/Уклонение: (\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 120,
+	orderNeuron: 120
+  },
+  {
+    name: "Additional Evasion",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к уклонению/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 121,
+	orderNeuron: 121
+  },
+  {
+    name: "Additional Percent Evasion",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение уклонения/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 122,
+	orderNeuron: 122
+  },
+  {
+    name: "Additional2 Percent Evasion",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение(.+)уклонения/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 123,
+	orderNeuron: 123
+  },
+  
+  {
+    name: "Energy Shield",
+    func: (str) => {
+		const match = str.match(/Энергетический щит: (\d+)/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 130,
+	orderNeuron: 130
+  },
+  {
+    name: "Additional Energy Shield",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к максимуму энергетического щита/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 131,
+	orderNeuron: 131
+  },
+  {
+    name: "Additional Percent Energy Shield",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение энергетического щита/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 132,
+	orderNeuron: 132
+  },
+  {
+    name: "Additional2 Percent Energy Shield",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение(.+)энергетического щита/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 133,
+	orderNeuron: 133
+  },
+  
+  {
+    name: "Maximum Life",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к максимуму здоровья/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 140,
+	orderNeuron: 140
+  },
+  {
+    name: "Maximum Mana",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к максимуму маны/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 142,
+	orderNeuron: 142
+  },
+  {
+    name: "Regenerate Life",
+    func: (str) => {
+		const match = str.match(/Регенерация (\d+\.?\d?) здоровья в секунду/);
+		if (!match) return false;
+		return parseFloat(match[1]);
+    },
+    orderShow: 144,
+	orderNeuron: 144
+  },
+  {
+    name: "Regenerate Mana",
+    func: (str) => {
+		const match = str.match(/Регенерация (\d+) маны в секунду/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 146,
+	orderNeuron: 146
+  },
+  {
+    name: "Increase Regenerate Mana",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение скорости регенерации маны/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 149,
+	orderNeuron: 149
+  },
+  {
+    name: "Block Chance",
+    func: (str) => {
+		const match = str.match(/Шанс блока: (\d+)%/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 150,
+	orderNeuron: 150
+  },
+  
+  {
+    name: "Additional Stun Threshold",
+    func: (str) => {
+		const match = str.match(/\+(\d+) к порогу оглушения/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 152,
+	orderNeuron: 152
+  },
+  
+  {
+    name: "Fire Resist",
+    func: (str) => {
+		const match = str.match(/\+(\d+)% к сопротивлению огню/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 160,
+	orderNeuron: 160
+  },
+  {
+    name: "Cold Resist",
+    func: (str) => {
+		const match = str.match(/\+(\d+)% к сопротивлению холоду/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 170,
+	orderNeuron: 170
+  },
+  {
+    name: "Lightning Resist",
+    func: (str) => {
+		const match = str.match(/\+(\d+)% к сопротивлению молнии/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 180,
+	orderNeuron: 180
+  },
+  {
+    name: "Chaos Resist",
+    func: (str) => {
+		const match = str.match(/\+(\d+)% к сопротивлению хаоса/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 190,
+	orderNeuron: 190
+  },
+  
+  
+  {
+    name: "Damage Spell",
+    func: (str) => {
+		const match = str.match(/(\d+)% увеличение урона от чар/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 300,
+	orderNeuron: 300
+  },  
+  {
+    name: "Speed Spell",
+    func: (str) => {
+		const match = str.match(/(\d+)% повышение скорости сотворения чар/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 310,
+	orderNeuron: 310
+  },  
+  {
+    name: "Allies Add Physic Attack Text",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+ до \d+) дополнительного физического урона атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 350,
+	orderNeuron: 0
+  },
+  {
+    name: "Allies Add Physic Attack Min",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного физического урона атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 350
+  },
+  {
+    name: "Allies Add Physic Attack Max",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного физического урона атаками/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 351
+  },
+  {
+    name: "Allies Add Fire Attack Text",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+ до \d+) дополнительного урона от огня атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 352,
+	orderNeuron: 0
+  },
+  {
+    name: "Allies Add Fire Attack Min",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного урона от огня атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 352
+  },
+  {
+    name: "Allies Add Fire Attack Max",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного урона от огня атаками/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 353
+  },
+  {
+    name: "Allies Add Cold Attack Text",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+ до \d+) дополнительного урона от холода атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 354,
+	orderNeuron: 0
+  },
+  {
+    name: "Allies Add Cold Attack Min",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного урона от холода атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 354
+  },
+  {
+    name: "Allies Add Cold Attack Max",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного урона от холода атаками/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 355
+  },
+  {
+    name: "Allies Add Lightning Attack Text",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+ до \d+) дополнительного урона от молнии атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 356,
+	orderNeuron: 0
+  },
+  {
+    name: "Allies Add Lightning Attack Min",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного урона от молнии атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 356
+  },
+  {
+    name: "Allies Add Lightning Attack Max",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного урона от молнии атаками/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 357
+  },
+  {
+    name: "Allies Add Chaos Attack Text",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+ до \d+) дополнительного урона от хаоса атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 358,
+	orderNeuron: 0
+  },
+  {
+    name: "Allies Add Chaos Attack Min",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного урона от хаоса атаками/);
+		if (!match) return false;
+		return match[1];
+    },
+    orderShow: 0,
+	orderNeuron: 358
+  },
+  {
+    name: "Allies Add Chaos Attack Max",
+    func: (str) => {
+		const match = str.match(/Союзники в вашем присутствии наносят от (\d+) до (\d+) дополнительного урона от хаоса атаками/);
+		if (!match) return false;
+		return match[2];
+    },
+    orderShow: 0,
+	orderNeuron: 359
+  }
+];
+
+
+
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0; // Преобразуем в 32-битное целое
+  }
+  return hash;
+}
+
+// Создаём Map для быстрого доступа к orderOut по имени нейрона
+const neuronOrderShowMap = new Map(neurons.map(neuron => [neuron.name, neuron.orderShow]));
+const neuronOrderNeuronMap = new Map(neurons.map(neuron => [neuron.name, neuron.orderNeuron]));
+const neuronMapName = new Map(neurons.map(neuron => [neuron.name, neuron]));
+
+/**
+ * Основная функция, которая проверяет строки и возвращает:
+ * - список функций, которые вернули число для каждой строки
+ * - строки, на которых все функции вернули false
+ */
+function processNeuron(text) {
+	const successfulNeuron = {};
+	const successfulLines = [];
+	const failedLines = [];
+
+	const lines = text.replace(/\r/g, '').split('\n');
+
+	for (const line of lines) {
+		let hasAnySuccess = false;
+
+		for (const { name, func, orderShow, orderNeuron } of neurons) {
+			const result = func(line);
+			if (result !== false) {
+				if (!successfulNeuron[name]) {
+					successfulNeuron[name] = [];
+				}
+				successfulNeuron[name].push({ line, result, index: lines.indexOf(line), orderShow, orderNeuron  });
+				successfulLines.push(lines.indexOf(line));
+				hasAnySuccess = true;
+			}
+		}
+
+		if (!hasAnySuccess) {
+			failedLines.push({line, index: lines.indexOf(line)});
+		}
+	}
+
+	return { successfulNeuron, failedLines, successfulLines };
+}
+
+function getInputNeuronCount() {
+    return neurons.filter(neuron => neuron.orderNeuron > 0).length;
+}
+
+function getNeuronInputFromNeuron(neuron){
+	const preparedNeuron = Array.from(neuronOrderNeuronMap.keys())
+		.filter((neuronName) => neuronMapName.get(neuronName).orderNeuron>0)
+		.sort((neuronNameA, neuronNameB) => {
+			const orderA = neuronOrderNeuronMap.get(neuronNameA) ?? 0;
+			const orderB = neuronOrderNeuronMap.get(neuronNameB) ?? 0;
+			return orderB - orderA;
+		});
+	return resultNeuron = preparedNeuron.map(neuronName => {
+        const results = neuron.successfulNeuron[neuronName];
+		if (!results) return 0;
+		return results.reduce((sum, result) => sum + Number(result.result), 0);
+	});
+}
+
+function prepareTrainingSet(name, neuron, needValue){
+	const trainingSet = getNeuronInputFromNeuron(neuron);
+	trainingSet.forEach((x, i)=>{
+		if (typeof x !== 'number')
+			console.error(x, i);
+	});
+	return {
+		name, 
+		input: trainingSet, 
+		output: [needValue]
+	};	
+}
+
+const config = {
+	binaryThresh: 0.5, // ¯\_(ツ)_/¯
+	hiddenLayers: [neurons.length], // array of ints for the sizes of the hidden layers in the network
+	activation: 'sigmoid', // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh']
+	errorThresh: 0.0001,
+	timeout: 500,
+	logPeriod: 10
+};
+
+// Хранилище экземпляров Net
+const netCache = new Map();
+const netAlreadyTrained  = new Set();
+	
+// Функция для получения или создания экземпляра Net
+function getOrCreateNet(heroId, itemType) {
+    // Формируем уникальный ключ для комбинации heroId и itemType
+    const key = `${heroId}:${itemType}`;
+    
+    // Проверяем, есть ли уже экземпляр в кэше
+    if (netCache.has(key)) {
+        return netCache.get(key);
+    }
+    
+	// Проверяем localStorage на наличие сохранённого состояния
+    const savedNetState = localStorage.getItem(`net_${key}`);
+    let netInstance;
+	
+	const currentInputNeurons = getInputNeuronCount();
+	const currentHiddenNeurons = neurons.length;
+	
+	if (savedNetState) {
+        try {
+            const netState = JSON.parse(savedNetState);
+			const savedInputNeurons = netState.sizes[0]; // Число входных нейронов
+			const savedHiddenNeurons = netState.sizes[1]; // Число скрытых нейронов
+			// getInputNeuronCount
+			if (savedInputNeurons == currentInputNeurons && savedHiddenNeurons == currentHiddenNeurons){
+				netInstance = new brain.NeuralNetwork();
+				netInstance.fromJSON(netState); // Восстанавливаем сеть из JSON
+				// console.log(`Restored Net for ${key} from localStorage`);
+			}else{
+				// Если сохранённое состояния не совпадает по размерам, создаём новую сеть
+				netInstance = new brain.NeuralNetwork(config);
+			}
+        } catch (error) {
+            // console.error(`Failed to restore Net for ${key}:`, error);
+            // Если восстановление не удалось, создаём новую сеть
+            netInstance = new brain.NeuralNetwork(config);
+        }
+    } else {
+        // Если нет сохранённого состояния, создаём новую сеть
+        netInstance = new brain.NeuralNetwork(config);
+    }
+	
+    netCache.set(key, netInstance);
+    
+    return netInstance;
+}
+
+
+
+function trainingNet(net, trainingSet, heroId, itemType) {
+	if (trainingSet.length == 0) return;
+	showLoadingOverlay();
+	netAlreadyTrained.add(net);
+    // Формируем уникальный ключ для комбинации heroId и itemType
+    const key = `${heroId}:${itemType}`;
+	// const startTime = Date.now();
+	// const maxTime = 5000;//5 second maximum on 1 training
+	// while(Date.now() - startTime < 5000){
+	net.train(
+		trainingSet,
+		{
+			log: detail => console.log(detail)
+		}
+	);
+	// const elapsedSeconds = Math.round((Date.now() - startTime) / 50);
+	// console.log(elapsedSeconds);
+	// await updateProgressBar(elapsedSeconds);
+	// }
+	try {
+		const netState = net.toJSON(); // Сериализуем сеть в JSON
+		if (false) localStorage.setItem(`net_${key}`, JSON.stringify(netState));
+		// console.log(`Saved Net state for ${key} to localStorage`);
+	} catch (error) {
+		// console.error(`Failed to save Net state for ${key}:`, error);
+	}
+	hideLoadingOverlay();
+}
+
+function calcNet(net, neuron){
+	if (!netAlreadyTrained.has(net)) return;
+	const power = 4;
+	const value = net.run(getNeuronInputFromNeuron(neuron))[0];	
+	return Math.round(value * Math.pow(10, power)) / Math.pow(10, power);
+}
+
+function calcNeuronText(neuron, text)
+{	
+	const lines = text.replace(/\r/g, '').split('\n');
+	let resultOut = false;
+	for (const line of lines) {
+		const res = neuron.func(line);
+		if (res){
+			if (!resultOut){
+				if (isFinite(res)){
+					resultOut = res*1;
+				} else{
+					resultOut = res;
+				}
+			}else if (isFinite(resultOut)){
+				resultOut+=res*1;
+			}else{
+				resultOut+='; ' + res;
+			}	
+		}
+	}
+	return resultOut;
+}
+
+function analyzeWeakNeurons(items){
+	const enoughNeuron = 5; //Пометим, что 5 упоминаний для нейрона достаточно.
+	let neuronStats = neurons.map(neuron => ({
+		count: 0,//Мы будем считать число получения нейронов
+		items: [],//В этом массие храним сработавшие предметы
+		func: neuron.func
+	})); 
+	for (const item of items){
+		const lines = item.text.replace(/\r/g, '').split('\n');
+		for (const neuron of neuronStats){
+			for (const line of lines){
+				if (neuron.func(line) !== false){
+					neuron.items.push(item);
+					neuron.count ++;
+					break; //Одно срабатывание для нейрона достаточно, нет смысла смотреть другие строчки
+				}
+			}
+		}
+		neuronStats = neuronStats.filter(neuron=>neuron.count < enoughNeuron);//Если нейрон уже набрал нужное количество - нет смысла проверять его впредь
+	}
+	neuronStats = neuronStats.filter(neuron => neuron.count > 0);//Если нейрон ни разу не сработал, то его нет смысла объявлять слабым. Это возможно не подходящий тип предмета
+	return {/*weakNeuron: neuronStats, */weakItems: new Set(neuronStats.flatMap(neuron=>neuron.items))};
+}
+
+
+	// const lines = text.replace(/\r/g, '').split('\n');
+// for (const line of lines) {
+		// let hasAnySuccess = false;
+
+		// for (const { name, func, orderShow, orderNeuron } of neurons) {
+			// const result = func(line);
+			// if (result !== false) {
+				// if (!successfulNeuron[name]) {
+					// successfulNeuron[name] = [];
+				// }
+				// successfulNeuron[name].push({ line, result, index: lines.indexOf(line), orderShow, orderNeuron  });
+				// successfulLines.push(lines.indexOf(line));
+				// hasAnySuccess = true;
+			// }
+		// }
+
+		// if (!hasAnySuccess) {
+			// failedLines.push({line, index: lines.indexOf(line)});
+		// }
+	// }

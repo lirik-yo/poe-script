@@ -1,0 +1,105 @@
+(function (){
+	class Item {
+		constructor({ id, rawText, name, type, subtype, properties = {} }) {
+			this.id = id; // уникальный ID (например, UUID)
+			this.rawText = rawText; // оригинальный текст из игры
+			this.name = name; // название предмета
+			this.type = type; // тип (оружие, кольцо, перчатки...)
+			this.subtype = subtype; // тип (оружие, кольцо, перчатки...)
+			this.properties = properties; // { "Урон": 35, "Защита": 12 }
+			
+			this._cache = {}; // внутренний кэш для ускорения повторных вычислений
+		}
+
+		/**
+		 * Проверка наличия свойства
+		 */
+		hasProperty(prop) {
+			return prop in this.properties;
+		}
+
+		/**
+		 * Получить числовое значение свойства или null
+		 */
+		getNumeric(prop) {
+			const value = this.properties[prop];
+			return typeof value === 'number' ? value : null;
+		}
+
+		/**
+		 * Кешируемый доступ к значениям — например, фильтрация
+		 */
+		getCachedValue(key, computeFn) {
+			if (!(key in this._cache)) {
+				this._cache[key] = computeFn(this);
+			}
+			return this._cache[key];
+		}
+
+		/**
+		 * Преобразование для сохранения в IndexedDB
+		 */
+		toJSON() {
+			return {
+				id: this.id,
+				rawText: this.rawText,
+				name: this.name,
+				type: this.type,
+				subtype: this.subtype,
+				properties: this.properties,
+			};
+		}
+
+		/**
+		 * Восстановление из JSON-данных
+		 */
+		static fromJSON(data) {
+			return new Item(data);
+		}
+	}
+	
+	window.Item = Item;
+})();
+
+Item.generateHashItem = function(rawText) {	
+	let hash = 0;
+	for (let i = 0; i < rawText.length; i++) {
+		const char = rawText.charCodeAt(i);
+		hash = ((hash << 5) - hash) + char;
+		hash |= 0; // Приводим к 32-битному целому
+	}
+	return Math.abs(hash).toString(16); // шестнадцатеричное представление
+};
+
+// внутри IIFE класса Item
+Item.fromText = function(rawText) {
+	const lines = rawText.trim().split('\n').map(line => line.trim()).filter(s=>s);
+
+	if (lines.length < 4) {
+		throw new Error("Недостаточно строк для парсинга предмета.");
+	}
+
+	const classLine = lines[0];
+	const nameLine = lines[2];
+	const subLine = lines[3];
+	const properties = lines.slice(4); // остальное пока как строки
+
+	const itemClassMatch = classLine.match(/Класс предмета:\s*"(.+?)"/);
+	const itemClass = itemClassMatch ? itemClassMatch[1] : "Неизвестный класс";
+
+	const name = nameLine;
+	const subclass = subLine.startsWith('--------') ? null : subLine;
+	
+	const hash = Item.generateHashItem(rawText);
+	const timestamp = new Date().toISOString();
+	const id = `${hash}_I_${timestamp}`;
+
+	return new Item({
+		id: id, 
+		rawText: rawText,
+		name: name,
+		itemClass: itemClass,
+		subclass: subclass,
+		rawProperties: properties
+	});
+};

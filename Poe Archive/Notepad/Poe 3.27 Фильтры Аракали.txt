@@ -1,0 +1,44 @@
+"!26 chaos$" "!26 divine$" "price|b/o"   "!STD" "!1(\.\d\d)? chaos$"
+
+
+Приспешники имеют #% повышение скорости атаки - минимум 5%, в идеале 6%
+Приспешники наносят от # до # дополнительного физического урона - минимум 21+ (т2), в идеале 25+ (т1)
+
+
+
+"[2-9][1-9] to [2-9]\d additional physical damage|[4-6]% increased attack speed"
+"[2-9][1-9] to [2-9]\d additional physical damage" "[5-6]% increased attack speed"
+"[2-9][1-9] to [2-9]\d additional physical damage" 
+"[5-6]% increased attack speed"
+
+"Determination|Arrogance|Precision|Withering Touch"
+
+
+WTS Softcore
+(Return items after challenge done.)
+
+{22} Equipped Elites
+Full challenge(Fractured; Corrupted; Crafted; Synthesized; Unique) - 2 :divine: 
+Need kineticist merc.
+{25} Glorious Gemstones 
+Gem reach level 30 or 53% quality - 40 :chaos:
+
+IGN: @OcultistAlisaArakali 
+
+"[5-6]\d% increased armour|25% increased effect"
+"[5-6]\d% increased armour" "25% increased effect"
+
+
+"25% increased effect|reduced effect of curse|increased armour during|bleeding and corrupted"
+
+
+
+AlisaAcolyteofChayula
+качест|гнезд|камне
+уклонени энерге редки "жизни|урон|сопротив"
+корость|клонение|жизни|качест|гнезд|урон|сопротив
+
+хаос|пустой|резонанс|шёпот|критич|меткость|энергии
+
+
+уклонен|энергетический

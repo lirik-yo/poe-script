@@ -1,0 +1,39 @@
+class DomCache {
+	static Instance = new DomCache();
+		
+	constructor() {
+		this.cache = new Map();
+	}
+
+	/**
+	 * Получает DOM-элемент по селектору, с кешированием.
+	 * @param {string} selector - CSS селектор
+	 * @returns {HTMLElement|null}
+	 */
+	get(selector) {
+		if (!this.cache.has(selector)) {
+			const element = document.querySelector(selector);
+			if (!element) {
+				console.error(`DOM element not found: ${selector}`);
+			}
+			this.cache.set(selector, element);
+		}
+		return this.cache.get(selector);
+	}
+
+	/**
+	 * Принудительно обновляет элемент в кеше.
+	 * @param {string} selector - CSS селектор
+	 */
+	refresh(selector) {
+		const element = document.querySelector(selector);
+		this.cache.set(selector, element);
+	}
+
+	/**
+	 * Очистить кеш.
+	 */
+	clear() {
+		this.cache.clear();
+	}
+}

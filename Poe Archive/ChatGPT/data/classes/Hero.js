@@ -1,0 +1,77 @@
+class Hero {
+	constructor({ id, name, description = '', allowedSlots = {} }) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+
+		// { "weapon": 1, "armor": 2 }
+		this.allowedSlots = allowedSlots;
+
+		// { "weapon": [itemId], "armor": [itemId1, itemId2] }
+		this.inventory = {};
+
+		// Инициализируем пустыми массивами по слотам
+		for (const slot in allowedSlots) {
+			this.inventory[slot] = [];
+		}
+	}
+
+	/**
+	 * Проверяет, может ли герой носить предмет указанного типа
+	 */
+	canEquip(type) {
+		return type in this.allowedSlots;
+	}
+
+	/**
+	 * Пытается добавить предмет в слот
+	 */
+	equipItem(type, itemId) {
+		if (!this.canEquip(type)) return false;
+
+		const max = this.allowedSlots[type];
+		const current = this.inventory[type];
+
+		if (current.length >= max) return false;
+
+		this.inventory[type].push(itemId);
+		return true;
+	}
+
+	/**
+	 * Удаляет предмет из слота
+	 */
+	unequipItem(type, itemId) {
+		if (!this.canEquip(type)) return false;
+		this.inventory[type] = this.inventory[type].filter(id => id !== itemId);
+	}
+
+	/**
+	 * Проверяет, содержит ли герой данный предмет
+	 */
+	hasItem(itemId) {
+		return Object.values(this.inventory).some(arr => arr.includes(itemId));
+	}
+
+	/**
+	 * Сериализация в JSON для IndexedDB
+	 */
+	toJSON() {
+		return {
+			id: this.id,
+			name: this.name,
+			description: this.description,
+			allowedSlots: this.allowedSlots,
+			inventory: this.inventory,
+		};
+	}
+
+	/**
+	 * Создание из JSON (например, из базы данных)
+	 */
+	static fromJSON(data) {
+		const hero = new Hero(data);
+		hero.inventory = data.inventory || {};
+		return hero;
+	}
+}

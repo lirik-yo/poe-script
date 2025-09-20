@@ -1,0 +1,64 @@
+(function () {
+
+	async function getNeuronAnalysisSummary(currentType) {
+		const items = await DB.getAllItems();
+		const neurons = await DB.getAllNeurons();
+
+		const regexList = neurons.map(n => {
+			try {
+				return new RegExp(n.regex, "i");
+			} catch {
+				return null;
+			}
+		}).filter(r => r);
+
+		let badTotalCount = 0;
+		let badCurrentTypeCount = 0;
+		let firstBadLineGlobal = null;
+		let firstItemGlobal = null;
+		let firstBadLineCurrentType = null;
+		let firstItemCurrentType = null;
+
+		for (const item of items) {
+			if (!Array.isArray(item.textLines)) continue;
+			const isCurrentType = item.type === currentType;
+
+			for (const line of item.textLines) {
+				const matched = regexList.some(r => r.test(line));
+				if (!matched) {
+					badTotalCount++;
+					if (isCurrentType) {
+						badCurrentTypeCount++;
+						if (!firstBadLineCurrentType) {
+							firstBadLineCurrentType = line;
+							firstItemCurrentType = item;
+						}
+					}else{
+						if (!firstBadLineGlobal) {
+							firstBadLineGlobal = line;
+							firstItemGlobal = item;
+						}
+					}
+				}
+			}
+		}
+		
+		return {
+			badTotalCount,
+			badCurrentTypeCount,
+			firstBadLineGlobal,
+			firstItemGlobal,
+			firstBadLineCurrentType,
+			firstItemCurrentType
+		};
+	}
+
+	window.NeuronSummary = { getNeuronAnalysisSummary };
+	// window.UpdateNeuronSummary = updateNeuronSummary;
+
+	// // 👇 Доступ к сохранённым данным, когда понадобится
+	// window.__NeuronDebugInfo = {
+		// getFirstBadLineGlobal: () => ({ line: firstBadLineGlobal, item: firstItemGlobal }),
+		// getFirstBadLineCurrentType: () => ({ line: firstBadLineCurrentType, item: firstItemCurrentType })
+	// };
+})();

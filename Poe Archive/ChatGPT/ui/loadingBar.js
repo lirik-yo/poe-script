@@ -1,0 +1,83 @@
+const LoadingBar = (function () {	
+	let activeLoadingCount = 0;
+	
+	function functionIsPromise(fn) {
+		const fnStr = fn.toString();
+		return (
+			fnStr.includes('return new Promise') || 
+			fnStr.includes('async') ||
+			fnStr.includes('Promise.resolve')
+		);
+	}
+
+	function show(message = 'Loading...') {
+		DomCache.Instance.get('#loading-overlay').style.display = 'flex';
+		if (activeLoadingCount == 0) DomCache.Instance.get('#loading-text').textContent = message;
+		activeLoadingCount++;	
+	}
+
+	function hide() {	
+		activeLoadingCount--;
+		if (activeLoadingCount > 0) return;
+		DomCache.Instance.get('#loading-overlay').style.display = 'none';
+	}
+
+	/**
+	 * Обёртка для асинхронных операций
+	 * Показывает загрузку, блокирует UI, скрывает после завершения
+	 */
+	async function withLoading(fn, message = '') {
+		if (typeof fn !== 'function') {
+			throw new TypeError(`withLoading ожидает функцию, а получил: ${typeof fn}. Используй withLoading(()=>func()) или withLoading(func) вместо withLoading(func(...))`);
+		}
+		let shown = false;
+		let shownAt = null;
+		let showTimer, minVisibleTimer;
+
+		const fnIsPromise = functionIsPromise(fn);
+		
+		if (message == '')
+			message = window.hints[Math.floor(Math.random() * window.hints.length)];
+		
+		// Таймер на отложенное появление
+		//Если функция умеет в асинхрон - делаем отложенный показ, иначе сразу по выходу.
+		showTimer = setTimeout(()=>{
+			shownAt = performance.now();
+			shown = true;
+			show(message);
+		}, fnIsPromise ? Constants.LOADING_DELAY_NO_SOW_MS : 0);
+				
+		//Если функция умеет в асинхрон - запустим её сразу, иначе сразу по выходу из функции.
+		let taskPromise;
+		if (fnIsPromise){
+			taskPromise = fn();
+		}else{
+			taskPromise = new Promise(resolve=>{
+				setTimeout(() => resolve(fn()), 10);
+			});
+		}
+
+		try {
+			await taskPromise;
+		} finally {
+			clearTimeout(showTimer);
+			if (shown){
+				const elapsed = performance.now() - shownAt;
+				const remaining = Constants.LOADING_DELAY_MS - elapsed;
+				if (remaining > 0) {
+					setTimeout(() => {
+						hide();
+					}, remaining);
+				} else {
+					hide();
+				}
+			}
+		}
+	}
+
+	return {
+		show,
+		hide,
+		withLoading
+	};
+})();

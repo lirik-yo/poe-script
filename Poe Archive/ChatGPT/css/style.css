@@ -1,0 +1,293 @@
+/* ===== Общие стили ===== */
+html, body {
+	font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	overflow: hidden; /* Prevent scrolling unless content overflows */
+}
+
+
+h2, h3 {
+	margin-bottom: 0.5rem;
+}
+
+textarea,
+input[type="text"],
+select {
+	width: 100%;
+	padding: 0.5rem;
+	border: 1px solid #cbd5e0;
+	margin-bottom: 0.5rem;
+	font-size: 0.9rem;
+}
+
+button {
+	padding: 0.5rem 1rem;
+	border: none;
+	font-weight: bold;
+	border-radius: 4px;
+	cursor: pointer;
+	margin-bottom: 0.5rem;
+}
+
+table,td, th {
+		border: 1px solid black;
+}
+
+table {
+	border-collapse: collapse; /* Объединяет границы ячеек */
+}
+
+/* Main layout container */
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 3fr; /* 1/4 for tabs, 3/4 for main-diagram */
+    grid-template-rows: 20vh 1fr 40px; /* 1/3 for comparison-bar, remaining for content, 40px for status-bar */
+    height: 100vh;
+    width: 100vw;
+}
+
+
+/* Top properties: Full width, top third of the screen */
+#comparison-bar {
+    grid-column: 2 / -1; /* Span all columns */
+    grid-row: 1 / 2; /* First row */
+    background-color: #f0f0f0; /* Temporary background for visibility */
+}
+
+/* Status bar: Full width, fixed 40px at the bottom */
+/* ===== Статусная строка ===== */
+#status-bar {
+    grid-column: 1 / -1; /* Span all columns */
+    grid-row: 3 / -1; /* Last row */
+    height: 40px;
+    background-color: #333; /* Temporary background for visibility */
+	background-color: #2d3748;
+	font-size: 0.85rem;
+	padding: 0.5rem;
+	z-index: 10;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Tabs: 1/4 width, stretches between top-properties and status-bar */
+#tab-nav {
+    grid-column: 1 / 2; /* First column */
+    grid-row: 1 / 2; /* Middle row */
+    background-color: #e0e0e0; /* Temporary background for visibility */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto; /* Do not grow or shrink, use content height */
+}
+/* Tabs: 1/4 width, stretches between top-properties and status-bar */
+#tab-content {
+    grid-column: 1 / 2; /* First column */
+    grid-row: 2 / 3; /* Middle row */
+    background-color: #e0e0e0; /* Temporary background for visibility */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+/* Navigation tabs */
+#tab-nav-items, #tab-nav-heroes, #tab-nav-neurons {
+    flex: 1; /* Each nav div takes equal height */
+    padding: 2px 4px;
+    cursor: pointer;
+    background-color: #ccc;
+    border-bottom: 1px solid #999;
+    transition: background-color 0.3s;
+	gap: 4px;    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+#tab-nav-items div, #tab-nav-heroes div, #tab-nav-neurons div{
+	display: flex;
+	align-items: center; /* выравнивание по вертикали */
+	gap: 8px; /* расстояние между textarea и кнопкой */	
+	width: 100%;
+	justify-content: space-between;
+}
+#tab-nav-items.active, #tab-nav-heroes.active, #tab-nav-neurons.active {
+    background-color: #fff;
+    font-weight: bold;
+}
+
+#tab-nav-items:hover, #tab-nav-heroes:hover, #tab-nav-neurons:hover {
+    background-color: #ddd;
+}
+
+/* Content areas */
+#tab-content-items, #tab-content-heroes, #tab-content-neurons {
+    display: none;
+    padding: 10px;
+    flex: 1; /* Fill remaining space in #tabs */
+}
+
+#tab-content-items.active, #tab-content-heroes.active, #tab-content-neurons.active {
+    display: block;
+}
+
+
+#hero-name{
+	min-width: calc(min(30%, 150px));
+}
+
+#hero-description{
+	display: -webkit-box;
+	-webkit-line-clamp: 3;      /* сколько строк оставить */
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.cropped-text{
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-sized{
+	height: 20px;
+	padding: 0;
+	resize: none;
+	overflow: hidden;
+}
+
+#add-item-button {
+    width: calc( min(100px, 20%) );
+}
+
+
+
+/* .input-wrapper { */
+	/* display: flex; */
+	/* align-items: center; /* выравнивание по вертикали */ */
+	/* gap: 8px; /* расстояние между textarea и кнопкой */ */
+/* } */
+
+/* .item-text { */
+	/* height: 32px; /* чтобы соответствовать кнопке */ */
+	/* resize: none; */
+/* } */
+
+/* .add-button { */
+	/* height: 32px; */
+/* } */
+
+/* Main diagram: Fills remaining space */
+main {
+    grid-column: 2 / 3; /* Second column */
+    grid-row: 2 / 3; /* Middle row */
+    display: flex;
+    flex-direction: column;
+    /*overflow: auto; /* Allow scrolling if content overflows */
+    height: 100hv;
+}
+
+#main-diagram{
+    flex: 4;
+}
+
+#bad-items-no-compare{
+    flex: 1;
+}
+/* ===== Структура колонок ===== */
+
+/*
+.layout {
+	display: flex;
+	height: 100vh;
+}
+
+.column-left,
+.column-right {
+	width: 25%;
+	padding: 1rem;
+	background-color: white;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.column-left {
+	border-right: 1px solid #cbd5e0;
+}
+
+.column-right {
+	border-left: 1px solid #cbd5e0;
+}
+
+.column-center {
+	width: 50%;
+	padding: 1rem;
+	overflow-y: auto;
+}
+
+/* ===== Кнопки ===== */
+.button-primary {
+	background-color: #3182ce;
+}
+
+.button-danger {
+	background-color: #e53e3e;
+}
+
+.button-warn {
+	background-color: #d69e2e;
+}
+
+.button-secondary {
+	background-color: #805ad5;
+}
+
+.button-success {
+	background-color: #38a169;
+}
+
+/* ===== Блоки ===== */
+.box {
+	background-color: #f9fafb;
+	border: 1px dashed #a0aec0;
+	padding: 1rem;
+	border-radius: 6px;
+	min-height: 300px;
+	margin-bottom: 1rem;
+}
+
+.box-error {
+	background-color: #fed7d7;
+	border: 1px solid #fc8181;
+	padding: 0.5rem;
+	border-radius: 4px;
+	margin-bottom: 1rem;
+}
+
+.box-warning {
+	background-color: #fefcbf;
+	border: 1px solid #faf089;
+	padding: 0.5rem;
+	border-radius: 4px;
+	margin-bottom: 1rem;
+}
+
+/*
+.status {
+	padding: 8px;
+	margin: 8px;
+	display: none;
+	border-radius: 4px;
+	font-weight: bold;
+}
+
+.status.info		{ background-color: #eef; color: #003366; }
+.status.success { background-color: #efe; color: #003300; }
+.status.error	 { background-color: #fee; color: #660000; }
+.status.loading { background-color: #ffd; color: #665500; }
+*/

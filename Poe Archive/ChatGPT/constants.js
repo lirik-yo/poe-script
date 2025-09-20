@@ -1,0 +1,12 @@
+const Constants = (function () {
+  return {
+    MAX_ITEM_LEVEL: 100,
+    DEFAULT_HERO_NAME: 'Новый герой',
+    LOADING_DELAY_MS: 500,
+    LOADING_DELAY_NO_SOW_MS: 40,
+    DB_NAME: 'PoE_Inventory_DB',
+    DB_VERSION: 1,
+    DB_ITEM_STORE: 'items',
+    DB_HERO_STORE: 'heroes'
+  };
+})();

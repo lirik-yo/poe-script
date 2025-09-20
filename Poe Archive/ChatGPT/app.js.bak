@@ -1,0 +1,201 @@
+// app.js (заглушки вместо логики)
+
+function stub(msg) {
+  const status = document.getElementById('status-bar');
+  status.textContent = `[ЗАГЛУШКА] ${msg}`;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const addButton = document.getElementById('add-button');
+  const fileInput = document.getElementById('file-input');
+  const applyFilter = document.getElementById('apply-filter');
+  const deleteItemButton = document.getElementById('delete-button');
+  const filterInput = document.getElementById('filter-input');
+  const loadHeroesButton = document.getElementById('load-heroes');
+
+  if (addButton) {
+    addButton.addEventListener('click', () => {
+      stub('Добавление предмета: разобрать текст, проверить на дубликаты, сохранить в IndexedDB');
+    });
+  }
+
+  if (fileInput) {
+    fileInput.addEventListener('change', () => {
+      stub('Загрузка JSON-файла: распарсить файл, добавить предметы в базу как вручную');
+    });
+  }
+
+  if (applyFilter) {
+    applyFilter.addEventListener('click', () => {
+      stub('Фильтрация: применить фильтр по свойствам, обновить список предметов слева');
+    });
+  }
+
+  if (deleteItemButton) {
+    deleteItemButton.addEventListener('click', () => {
+      stub('Удаление текущего предмета: запросить подтверждение, удалить из базы и UI');
+    });
+  }
+
+  if (filterInput) {
+    filterInput.addEventListener('input', () => {
+      stub('Пользователь изменил фильтр свойств: обновить список предметов по условиям');
+    });
+  }
+
+  if (loadHeroesButton) {
+    loadHeroesButton.addEventListener('click', () => {
+      stub('Загрузка героев: открыть панель добавления героя, сохранить в IndexedDB');
+    });
+  }
+
+  stub('Приложение загружено (заглушка)');
+});
+
+/*
+// app.js
+
+// IndexedDB helper functions
+const DB_NAME = 'ItemComparatorDB';
+const DB_VERSION = 1;
+const STORE_ITEMS = 'items';
+const STORE_FLAVORS = 'flavors';
+
+let db;
+
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_ITEMS)) {
+        db.createObjectStore(STORE_ITEMS, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(STORE_FLAVORS)) {
+        db.createObjectStore(STORE_FLAVORS, { keyPath: 'text' });
+      }
+    };
+
+    request.onsuccess = () => {
+      db = request.result;
+      resolve(db);
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function saveItem(item) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_ITEMS, 'readwrite');
+    const store = tx.objectStore(STORE_ITEMS);
+    store.put(item);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+function getAllItems() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_ITEMS, 'readonly');
+    const store = tx.objectStore(STORE_ITEMS);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function generateId() {
+  return crypto.randomUUID();
+}
+
+function parseItemText(text, flavorList) {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(line => line && !/^[-\s]+$/.test(line));
+  const cleanLines = lines.filter(line => !flavorList.includes(line));
+  if (!cleanLines.length) return null;
+  return {
+    id: generateId(),
+    name: cleanLines[2] || cleanLines[0],
+    type: cleanLines.find(l => l.includes('Type')) || 'Unknown',
+    raw: cleanLines.join('\n')
+  };
+}
+
+async function loadItemsToList() {
+  const items = await getAllItems();
+  const list = document.getElementById('item-list');
+  list.innerHTML = '';
+  for (const item of items) {
+    const li = document.createElement('li');
+    li.className = 'bg-gray-100 mb-2 p-2 rounded';
+    li.textContent = `${item.name} (${item.type})`;
+    list.appendChild(li);
+  }
+}
+
+async function handleTextAdd() {
+  const textInput = document.getElementById('item-input');
+  const status = document.getElementById('status-bar');
+  const text = textInput.value.trim();
+  if (!text) {
+    status.textContent = 'Нечего добавлять';
+    return;
+  }
+  const flavorList = await getFlavorList();
+  const parsed = parseItemText(text, flavorList);
+  if (!parsed) {
+    status.textContent = 'Ошибка при парсинге предмета';
+    return;
+  }
+  await saveItem(parsed);
+  status.textContent = `Добавлен: ${parsed.name}`;
+  await loadItemsToList();
+}
+
+function getFlavorList() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_FLAVORS, 'readonly');
+    const store = tx.objectStore(STORE_FLAVORS);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result.map(f => f.text));
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function handleJsonLoad(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const content = JSON.parse(e.target.result);
+      if (!Array.isArray(content)) {
+        document.getElementById('status-bar').textContent = 'Файл должен содержать массив предметов';
+        return;
+      }
+      const flavorList = await getFlavorList();
+      let added = 0;
+      for (const entry of content) {
+        const parsed = parseItemText(entry, flavorList);
+        if (parsed) {
+          await saveItem(parsed);
+          added++;
+        }
+      }
+      await loadItemsToList();
+      document.getElementById('status-bar').textContent = `Добавлено предметов: ${added}`;
+    } catch (err) {
+      document.getElementById('status-bar').textContent = 'Ошибка чтения JSON файла';
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Initialize
+window.addEventListener('DOMContentLoaded', async () => {
+  await openDatabase();
+  document.getElementById('add-button').addEventListener('click', handleTextAdd);
+  document.getElementById('file-input').addEventListener('change', handleJsonLoad);
+  await loadItemsToList();
+});
+*/
