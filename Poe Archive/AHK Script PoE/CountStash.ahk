@@ -1,0 +1,116 @@
+﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#Warn  ; Enable warnings to assist with detecting common errors.
+#SingleInstance Force
+
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+#Include json.ahk
+#Include message.ahk
+#Include poeNinjaGet.ahk
+
+GetFileNameForStash(league, tabN){
+	return A_ScriptDir . "\StashDat\get-stash-items-" . league . "-" . tabN . "-" . A_DD . "-" . A_MM . ".json"
+}
+
+GetData(league){
+	fileName := GetFileNameForStash(league, 29)
+	dbFile	:=	FileOpen(fileName, "r")
+	dbFileText	:=	dbFile.Read()
+	dbJSON	:=	JSON.Load(dbFileText)
+	return dbJSON
+}
+
+ArrayCurrency := []
+
+CountMyRealyChaosAnalog(league){
+	global ListThingCurrency
+	global ArrayCurrency
+	jsondata := GetData(league)
+	itemsdata := jsondata["items"]
+	summary := 0
+	For name, currency in itemsdata
+	{
+		countdata := currency["stackSize"]	
+		namedata := currency["baseType"]
+		priceData := currency["note"]
+		poeData := ListThingCurrency[namedata]
+		if (namedata == "Chaos Orb")
+		{
+			poePrice := 1
+		}else{
+			poePrice := poeData.centerPrice
+		}
+		summCurrency := countdata*poePrice
+		summary += summCurrency
+		AddMessage("test")
+		ArrayCurrency[namedata] := {count:countdata, placeStash: -1, number: -1, note: priceData, icon: currency["icon"]}
+	}
+	return summary
+}
+
+StartDate := 20230408
+NowAndDiff := A_Now
+EnvSub, NowAndDiff, %StartDate%, Seconds
+
+NowAndDiff *= .294
+NowEquivalentChaos := CountMyRealyChaosAnalog("Ancestor")
+
+TimeToPickup := 10
+TimeToTrade :=  30
+TimeToAppraise := 100
+KoefWantSpeed := 2
+DivineData := ListThingCurrency["Divine Orb"]
+DivinePrice := DivineData.centerPrice
+
+ChaosPerSecond := NowEquivalentChaos/NowAndDiff
+DivinePerHour := ChaosPerSecond*3600/DivinePrice
+MinimumPricePickup := ChaosPerSecond*TimeToPickup*KoefWantSpeed
+MinimumProfitTrade := ChaosPerSecond*TimeToTrade*2*KoefWantSpeed ;buy and sell
+MinimumProfitSale := ChaosPerSecond*(TimeToTrade+TimeToAppraise)*KoefWantSpeed
+
+MsgBox, Very Long 
+
+CleanMessageAndSetTimeout(1000)
+	AddMessage("Second play:" . NowAndDiff)
+	AddMessage("My chaos stash:" . NowEquivalentChaos)
+	AddMessage("Speed chaos:" . ChaosPerSecond)
+	AddMessage("Speed divine:" . DivinePerHour)
+	AddMessage("Minimum pickup:" . MinimumPricePickup)
+	AddMessage("Minimum price for trade:" . MinimumProfitTrade)
+	AddMessage("Minimum price for item:" . MinimumProfitSale)
+	
+	AncientArray := ArrayCurrency["Ancient Orb"]
+	; {count:countdata, placeStash: -1, number: -1, note: priceData, icon: currency["icon"]}
+	AddMessage("Ancient Orb - count:" . AncientArray["count"])
+	AddMessage("Ancient Orb - placeStash:" . AncientArray["placeStash"])
+	AddMessage("Ancient Orb - number:" . AncientArray["number"])
+	AddMessage("Ancient Orb - note:" . AncientArray["note"])
+	AddMessage("Ancient Orb - icon:" . AncientArray["icon"])
+
+TestInfoCountStash(){
+	global NowAndDiff
+	global NowEquivalentChaos
+	global ChaosPerSecond
+	global DivinePerHour
+	global MinimumPricePickup
+	global MinimumProfitTrade
+	global MinimumProfitSale
+	AddMessage("Second play:" . NowAndDiff)
+	AddMessage("My chaos stash:" . NowEquivalentChaos)
+	AddMessage("Speed chaos:" . ChaosPerSecond)
+	AddMessage("Speed divine:" . DivinePerHour)
+	AddMessage("Minimum pickup:" . MinimumPricePickup)
+	AddMessage("Minimum price for trade:" . MinimumProfitTrade)
+	AddMessage("Minimum price for item:" . MinimumProfitSale)
+	
+	global ArrayCurrency
+	AncientArray := ArrayCurrency["Ancient Orb"]
+	; {count:countdata, placeStash: -1, number: -1, note: priceData, icon: currency["icon"]}
+	AddMessage("Ancient Orb - count:" . AncientArray["count"])
+	AddMessage("Ancient Orb - placeStash:" . AncientArray["placeStash"])
+	AddMessage("Ancient Orb - number:" . AncientArray["number"])
+	AddMessage("Ancient Orb - note:" . AncientArray["note"])
+	AddMessage("Ancient Orb - icon:" . AncientArray["icon"])
+}
+

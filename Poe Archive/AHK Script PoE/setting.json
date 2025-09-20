@@ -1,0 +1,11 @@
+{
+	"MaxChaos":100,
+	"MaxExalt" :5,
+	"MaxCountStack" :5,
+	"sdvigPriceBuy" :-0.15,
+	"sdvigPriceSell" :0.05,
+	"MinChaosProfit" :10,
+	"Debug" :1,
+	"ConfirmPrice" :0.05,
+	"ExaltPrice" :155
+}

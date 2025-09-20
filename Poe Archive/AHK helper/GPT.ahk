@@ -1,0 +1,149 @@
+﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#Warn  ; Enable warnings to assist with detecting common errors.
+#SingleInstance Force
+#Persistent
+SetBatchLines -1
+SendMode Input
+CoordMode, Mouse, Screen
+CoordMode, ToolTip, Screen
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+global guiOpen := false
+
+; 1.1 Горячая клавиша: клавиша "ё" (скан-код зависит от раскладки, используем SC029 для универсальности)
+$`::
+if !(WinActive("ahk_class POEWindowClass") or WinActive("ahk_class AutoHotkeyGUI")) {
+	Send, {``}
+	return
+}
+if (guiOpen){
+    Gui, %MyGui%:Destroy
+    guiOpen := false
+}
+
+guiOpen := true
+
+; 1.2 Копирование предмета
+temporaryClipboard := Clipboard
+Clipboard := ""
+Send, ^c
+ClipWait, 0.2
+if (ErrorLevel) {
+    guiOpen := false
+    return
+}
+
+itemText := Clipboard
+Clipboard := temporaryClipboard
+
+; 1.3 Определение типа предмета
+if (InStr(itemText, "Класс предмета: Валюта")) {
+    itemType := "ВАЛЮТА"
+} else {
+    itemType := "ВЕЩЬ"
+}
+
+; 1.4 GUI-меню с действиями
+Gui, New, +HwndMyGui -Caption
+global MyGui
+; Gui, Add, Text,, Тип предмета: %itemType%
+; Gui, Add, Button, gLabel_Build vBtnBuild, 8 - Пометить для билда
+; Gui, Add, Button, gLabel_Sell vBtnSell, 9 - Продать
+; Gui, Add, Button, gLabel_Buy vBtnBuy, 0 - Скупить
+; Gui, Add, Button, gLabel_Ignore vBtnIgnore, - - Игнорировать
+; Gui, Add, Button, gLabel_Close vBtnClose, = - Закрыть
+Gui, Font, s10, Segoe UI
+
+; Левая колонка — оригинальный текст
+Gui, Add, Text,, Текст предмета:
+Gui, Add, Edit, x10 y+5 w300 r15 ReadOnly vItemText
+GuiControl,, ItemText, %itemText%
+
+; Правая колонка — поля (пока заглушки)
+Gui, Add, Text, x+20 yp, Распознанные свойства:
+Gui, Add, Edit, x+20 y+5 w300 r15 ReadOnly vParsedFields
+
+; Нижние кнопки
+Gui, Add, Button, x10 y+20 w120 gLabel_Build, Пометить (8)
+Gui, Add, Button, x+10 w120 gLabel_Sell, Продать (9)
+Gui, Add, Button, x+10 w120 gLabel_Ignore, Игнорировать (-)
+
+; Gui, Show, AutoSize x%x% y%y%, AHK PoE Меню
+
+MouseGetPos, mx, my
+x := mx + 13   ; сдвиг вправо
+y := my + 13   ; сдвиг вниз
+
+Gui, Show, AutoSize x%x% y%y%, AHK PoE Меню
+return
+
+; Горячие клавиши для кнопок
+$8::
+if !(WinActive("ahk_class POEWindowClass") or WinActive("ahk_class AutoHotkeyGUI")) {
+	Send, 8 ; передаём дальше
+    return
+}
+Gosub Label_Build
+$9::
+if !(WinActive("ahk_class POEWindowClass") or WinActive("ahk_class AutoHotkeyGUI")) {
+	Send, 9 ; передаём дальше
+    return
+}
+Gosub  Label_Sell
+$0::
+if !(WinActive("ahk_class POEWindowClass") or WinActive("ahk_class AutoHotkeyGUI")) {
+	Send, 0 ; передаём дальше
+    return
+}
+Gosub  Label_Buy
+$-::
+if !(WinActive("ahk_class POEWindowClass") or WinActive("ahk_class AutoHotkeyGUI")) {
+	Send, - ; передаём дальше
+    return
+}
+Gosub  Label_Ignore
+$=::
+if !(WinActive("ahk_class POEWindowClass") or WinActive("ahk_class AutoHotkeyGUI")) {
+	Send, = ; передаём дальше
+    return
+}
+Gosub  Label_Close
+
+; Обработчики кнопок
+Label_Build:
+    ToolTip, 💡 Помечено как "для билда"
+    Sleep, 1000
+    ToolTip
+    Gosub Label_Close
+return
+
+Label_Sell:
+    ToolTip, 💰 Помечено как "продать"
+    Sleep, 1000
+    ToolTip
+    Gosub Label_Close
+return
+
+Label_Buy:
+    ToolTip, 📦 Помечено как "скупать"
+    Sleep, 1000
+    ToolTip
+    Gosub Label_Close
+return
+
+Label_Ignore:
+    ToolTip, ❌ Помечено как "игнорировать"
+    Sleep, 1000
+    ToolTip
+    Gosub Label_Close
+return
+
+GuiEscape:
+GuiClose:
+	GoSub Label_Close
+return
+
+Label_Close:
+    Gui, %MyGui%:Destroy
+    guiOpen := false
+return

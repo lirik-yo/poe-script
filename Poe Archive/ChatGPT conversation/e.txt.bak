@@ -1,0 +1,203 @@
+Как объеденить в твоём интерфейсе? Чтобы чаты и файлы были в одном общем проекте,
+ChatGPT сказал:
+Думал на протяжении 15s
+Po E Helper — Единый Проект (хаб)
+PoE Helper — единый проект (хаб)
+
+Этот документ — центральная точка проекта. Держим здесь структуру, ссылки на файлы, решения, TODO и мини‑шпаргалки. Рабочий чат — этот тред. Всё, что не код/таблицы — пишем прямо сюда.
+
+1) Цели и границы
+
+Один проект для PoE/PoE2: анализ предметов, распределение по билд‑героям, трейды/цены, автоматизация действий.
+
+Минимум дублирования: единые схемы данных (Item, Hero, Filter, Trade, Wishlist).
+
+AHK поверх общего ядра: горячие клавиши вызывают функции анализа/сравнения/торговли.
+
+2) Модули (единая архитектура)
+
+core/ — общие модели, сериализация/хранилище (JSON/CSV экспорт).
+
+analyzer/ — парсинг буфера (Ctrl+C), классификация, скоринг по фильтрам, «в утиль/почти/берём».
+
+compare/ — «герой → слоты → нужные свойства», учёт уровня/фильтра, вкладки для Jewels/аксессуаров/фласок.
+
+trade/ — чтение Client.txt, карта цен «свойства → цена», история продаж/непродаж.
+
+automation/ — AHK-скрипты, бинды, макросы (инвентарь, Quad Stash, сортировка/продажа, пометки).
+
+Решение: держим один набор JSON в /data/; AHK только вызывает функции и читает/обновляет эти JSON.
+
+3) Дерево проекта (предлагаемое)
+poe-helper/
+  data/
+    items/                # сохранённые дропы (raw)
+    sold/                 # проданные: карта свойств/цен
+    unsold/               # непроданные эталоны (для «в утиль»)
+    filters/              # правила для билдов и общие
+    heroes/               # герои и их слоты/требования
+    wishlists/            # хотелки по слотам (перечень свойств)
+  core/
+  analyzer/
+  compare/
+  trade/
+  automation/
+  docs/
+    decisions.md          # журнал решений
+    backlog.md            # крупные задачи
+4) Схемы данных (черновик)
+
+Item.json
+
+{
+  "id": "uuid",
+  "type": "Armor/Weapon/Jewel/Accessory/Flask",
+  "base": "Warstaff",
+  "ilvl": 78,
+  "rarity": "Rare",
+  "affixes": [{"group": "+Life", "tier": 2, "value": 85}],
+  "defenses": {"AR": 0, "EV": 210, "ES": 120},
+  "sockets": "G-G-B",
+  "price": {"value": 12, "currency": "chaos", "source": "manual|exchange"},
+  "tags": ["Chayula", "EV+ES"],
+  "status": "raw|sold|unsold|trash"
+}
+
+Hero.json (пример: Chayula, Path, Blood, Dea, Warbringer, Storm)
+
+{
+  "name": "Chayula",
+  "level": 42,
+  "slots": {
+    "Weapon": ["Warstaff"],
+    "Helmet": ["EV+ES"],
+    "Gloves": ["EV+ES"],
+    "Body": ["EV+ES"],
+    "Boots": ["EV+ES"],
+    "Rings": ["res cap", "+life"],
+    "Amulet": ["stat req"],
+    "Belt": ["flask sustain"],
+    "Flasks": ["suffix utility"],
+    "Jewel": ["%Life", "%ProjSpeed"]
+  }
+}
+
+Filter.json (правила оценки)
+
+{
+  "name": "EV+ES mid-level",
+  "appliesTo": ["Helmet","Gloves","Boots","Body"],
+  "levelRange": [30,60],
+  "rules": [
+    {"path": "defenses.EV", "min": 150},
+    {"path": "defenses.ES", "min": 80},
+    {"path": "affixes.+Life", "min": 70},
+    {"path": "affixes.ResAll", "min": 20}
+  ],
+  "scoreWeights": {"EV": 1, "ES": 1, "Life": 1.2, "ResAll": 0.8},
+  "labels": ["Chayula","Path"]
+}
+
+Trade.json (продажи/непродажи)
+
+{
+  "itemId": "uuid",
+  "sold": true,
+  "price": {"value": 15, "currency": "chaos"},
+  "date": "2025-09-17",
+  "features": ["+Life>=70","EV>=200","ES>=100","ResAll>=20"],
+  "combo": "single|pair|trio"
+}
+5) Таблица распределения слотов (мини‑сравнивалка)
+Герой	Оружие	Тело	Шлем	Перчи	Боты	Аксы (R/A/B)	Фласки	Jewel
+Chayula	Warstaff	EV+ES	EV+ES	EV+ES	EV+ES	res/life	util	%Life
+Path	Арбалет	EV+ES	EV+ES	EV+ES	EV+ES	res/life	util	proj
+Blood	Staff	AR+ES	AR+ES	AR+ES	AR+ES	strength	life	dot
+Dea	Лук + колчан	EV	EV	EV	EV	dex/acc	util	atk
+Warbringer	2H булава	AR	AR	AR	AR	str/res	armor	melee
+Storm	Wand + Focus	ES	ES	ES	ES	int/res	cs	cast
+
+Отдельные вкладки ниже: Jewels, Аксессуары, Фласки — критерии и приоритеты.
+
+6) Jewels — интересующие свойства (для кого)
+Свойство	Chayula	Path	Blood	Dea	Warbringer	Storm
+% Max Life	●	●	●	○	●	○
+% Minion/Proj Speed	○	●	○	○	○	●
+% Bow Damage/Acc	○	○	○	●	○	○
+% Spell Damage/Lightning	○	○	○	○	○	●
+% Melee/2H	○	○	○	○	●	○
+
+Легенда: ● — приоритет, ○ — допустимо.
+
+7) Аксессуары/фласки — правила
+
+Кольца/Амулеты/Пояса:
+
+приоритет: резисты до капа → жизнь/статы → ниша билда (crit, dot, proj, melee).
+
+жёсткие стоп‑условия: недостаток атрибутов < требуемого для экипировки, uncapped резы.
+
+Фласки: 1× жизнь, 1× защита (armor/evasion), 1× утилити (quicksilver/silver), 1× situational (wise oak/атакующая), 1× кастовая/крит.
+
+Обереги: под билдовую механику; держать список триггер‑аффиксов.
+
+8) Потоки данных
+
+AHK -> буфер -> analyzer (парсинг и скоринг) -> обновление /data/items.
+
+compare сопоставляет вещь с Hero слотами → рекомендует герою/в утиль.
+
+trade слушает Client.txt, привязывает цену/исход → пополняет /data/sold|unsold.
+
+analyzer периодически перерасчитывает «порог в утиль» на базе /unsold.
+
+9) Бэклог (крупные задачи)
+
+
+
+
+10) Журнал решений (добавлять кратко)
+
+2025‑09‑18: объединяем три ветки в один проект «PoE Helper». Единый JSON в /data/. AHK — thin layer, логика в ядре.
+
+11) Быстрые шаблоны
+
+Порог «в утиль» (идея): если вещь хуже 80‑й перцентили по ключевым фичам среди unsold → trash.
+
+Комбо‑проверки (single/pair/trio): проверять кластеры фич (например, Life+ResAll, EV+ES+Life, Melee2H+AR+Stun).
+
+12) Как этим пользоваться здесь (в чате)
+
+Обсуждения/решения — пишем в этот документ (секция 10).
+
+Таблицы/правила — расширяем секции 5–7.
+
+Когда пришлёшь кусок JSON/код AHK — вставляю сюда и версионирую в docs/decisions.md/backlog.md.
+
+Готово! Я создал единый проект-хаб на канвасе: «PoE Helper — единый проект (хаб)». Там есть:
+
+структура модулей (core/analyzer/compare/trade/automation),
+
+предлагаемое дерево папок,
+
+черновые JSON-схемы (Item, Hero, Filter, Trade),
+
+таблицы для сравнивалки слотов и Jewels,
+
+правила для аксессуаров/фласок,
+
+поток данных между модулями,
+
+бэклог и журнал решений,
+
+раздел «как пользоваться здесь, в чате».
+
+Дальше можем туда же добавлять код/таблицы/правила и вести журнал решений. Если хочешь, могу сразу:
+
+добавить стартовый backlog.md и decisions.md в канвасе,
+
+вставить AHK-скелет биндов и JSON-валидатор,
+
+накидать минимальные правила для Jewels/аксессуаров по каждому герою.
+
+ChatGPT может допускать ошибки. Проверьте важную информацию. См. настройки cookie-файлов.

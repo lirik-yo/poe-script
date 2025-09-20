@@ -1,0 +1,269 @@
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#Warn  ; Enable warnings to assist with detecting common errors.
+#SingleInstance Force
+
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+#Include json.ahk
+#Include message.ahk
+
+#Include PoeConstSettings.ahk
+
+PoeNinjaAPIUrl := "https://poe.ninja/api/data/"
+ListCurrencyOverview := ["Currency", "Fragment"]
+ListItemOverview := ["Invitation", "Incubator", "Incubator", "DivinationCard", "DeliriumOrb", "Scarab", "Fossil", "Oil", "Essence", "Resonator", "Artifact"]
+ListItemGemOverview := "SkillGem"
+ListedLeftUniquesFile := "listLeftUnique.json" 
+ListLeftUniques := []
+
+NameDBFile := "db.json"
+ListThingCurrency := []
+
+PoeNinjaJSONUrl := []
+For keyCurrency, typeCurrency in ListCurrencyOverview
+	PoeNinjaJSONUrl.Push(PoeNinjaAPIUrl . "CurrencyOverview?league=" . CurrentLeague . "&type=" . typeCurrency)
+For keyCurrency, typeCurrency in ListItemOverview
+	PoeNinjaJSONUrl.Push(PoeNinjaAPIUrl . "itemoverview?league=" . CurrentLeague . "&type=" . typeCurrency)
+PoeNinjaJSONSpecialGemUrl := PoeNinjaAPIUrl . "itemoverview?league=" . CurrentLeague . "&type=" . ListItemGemOverview
+GemsJSON := []
+
+
+
+LoadDataFromUrlSpecial(){
+	global PoeNinjaJSONSpecialGemUrl
+	global GemsJSON
+	AddMessage("Loading: LoadDataFromUrlSpecial " . "Gem" . " Start")
+	tempFile := "temp.json"
+	FileDelete %tempFile% 
+	AddMessage("Loading: LoadDataFromUrlSpecial " . "Gem" . " Download")
+	UrlDownloadToFile, %PoeNinjaJSONSpecialGemUrl%, %TempFile%
+	AddMessage("Loading: LoadDataFromUrlSpecial " . "Gem" . " ReadFile")
+	FC := FileOpen(tempFile, "r")
+	Price := FC.Read()
+	AddMessage("Loading: LoadDataFromUrlSpecial " . "Gem" . " ParseFile")
+	parsedJSON := JSON.Load(Price)
+	GemsJSON := parsedJSON.lines	
+}
+
+LoadDataFromFileSpecial()
+{
+	global ListedLeftUniquesFile
+	global ListLeftUniques
+	
+	dbFile	:=	FileOpen(ListedLeftUniquesFile, "r")
+	dbFileText	:=	dbFile.Read()
+	dbJSON	:=	JSON.Load(dbFileText)
+	
+	ListLeftUniques := dbJSON["NamesUnique"]
+}
+LoadDataFromFile()
+{
+	global NameDBFile
+	global ListThingCurrency
+	if (!FileExist(NameDBFile))
+		return
+	dbFile	:=	FileOpen(NameDBFile, "r")
+	dbFileText	:=	dbFile.Read()
+	dbJSON	:=	JSON.Load(dbFileText)
+	ListThingCurrency := dbJSON["Thing"]
+	
+	LoadDataFromFileSpecial()
+}
+LoadDataFromUrl()
+{
+	global PoeNinjaJSONUrl
+	tempFile := "temp.json"
+	For index, value in PoeNinjaJSONUrl
+	{
+		
+		AddMessage("Loading: LoadDataFromUrl " . index)
+		FileDelete %tempFile% 
+		UrlDownloadToFile, %value%, %TempFile%
+		if ErrorLevel
+		{
+		}
+		else
+		{
+			FC := FileOpen(tempFile, "r")
+			Price := FC.Read()
+			parsedJSON := JSON.Load(Price)
+			AddFromUrlJSON(parsedJSON)
+		}
+	}
+	LoadDataFromUrlSpecial()
+}
+
+
+
+AddFromUrlJSON(js)
+{
+	global ListThingCurrency	
+	global DefaultBuyShift	
+	global DefaultSellShift
+	if (js="test"){
+		AddMessage("Очень большая функция, надо делить. И чтобы всё было подвижное")
+		AddMessage("Не все параметры наследуются или используются?")
+		return false
+	}
+	For currency, cData in js.lines {
+		name := cData.currencyTypeName
+		if (name = "")
+			name := cData.name
+					
+		if (RegExMatch(name, "Silver Coin")>0)
+			continue
+		
+		tradeID := GetTradeID(name, cData, js.currencyDetails)
+		stackSize := GetStackSize(name, cData)
+			
+		centerPrice := cData.chaosEquivalent
+		if (centerPrice = "")
+			centerPrice := cData.chaosValue
+		
+		buyTradePrice := GetBuyPrice(cData)
+		sellTradePrice := GetSellPrice(cData)
+			
+		if (ListThingCurrency.HasKey(name)){
+			elementThing := ListThingCurrency[name]
+				maxCountBuy := min(elementThing["maxCountBuy"], stackSize-1)
+			if (cData["itemClass"] = 6){
+			}else{
+				maxCountBuy:= elementThing["maxCountBuy"]
+			}
+			maxCountSell := elementThing["maxCountSell"]
+		}else{
+			maxCountBuy := -1
+			maxCountSell := -1
+		}
+		
+		ListThingCurrency[name] := {name:name, tradeID:tradeId, stackSize: stackSize, shiftBuy:DefaultBuyShift, shiftSell:DefaultSellShift, maxCountBuy: maxCountBuy, maxCountSell: maxCountSell, centerPrice: centerPrice, buyTradePrice:buyTradePrice, sellTradePrice:sellTradePrice}
+		
+		; AddMessage("Temporary return - remove after debug")
+		;  return 
+	}
+}
+GetTradeID(name, data, currencyDetails)
+{
+	global ListThingCurrency
+	if (ListThingCurrency.HasKey(name))
+	{
+		if (name = "Exceptional Eldritch Ichor")
+		{
+		
+			; CleanMessageAndSetTimeout(2300)
+			; MsgBox, Wait
+			; AddMessage(ListThingCurrency[name])
+			; AddMessage(name)
+			elementThing := ListThingCurrency[name]
+			; AddMessage(data["detailsId"])
+			; AddMessage(elementThing["detailsId"])
+		}
+		tempID := ""
+		elementThing := ListThingCurrency[name]
+		if (elementThing.HasKey("detailsId"))
+			tempID := elementThing["detailsId"]
+		if (tempID != "")
+			return tempID
+	}	
+	
+	For currency2, cData2 in currencyDetails
+	{
+		if (name = cData2.name)
+		{
+			if (cData2.HasKey("tradeId"))
+				return cData2["tradeId"]
+		}
+	}			
+	return data["detailsId"]
+}
+
+GetStackSize(name, cData)
+{
+	global ListThingCurrency		
+	itemClass := cData["itemClass"]
+	
+	if (cData.HasKey("stackSize")){
+		if (cData["stackSize"] != "")
+			return cData["stackSize"]
+	}
+	if (ListThingCurrency.HasKey(name))
+	{
+		tempStack := ""
+		elementThing := ListThingCurrency[name]
+		if (elementThing.HasKey("stackSize"))
+			tempStack := elementThing["stackSize"]
+		if (tempStack != "")
+			return tempStack
+	}
+				
+	if (itemClass = 6)
+		return 1
+	if (RegExMatch(name, "Scouting Report|Eldritch Orb of Annulment")>0)
+		return 20
+	if (RegExMatch(name, "Exalted Orb|Fragment of | Catalyst| Oil|Blessing of |Splinter of|Sacrifice at |Eldritch| Crest|Mortal")>0)
+		return 10
+	if (RegExMatch(name, " Breachstone|Emblem|Goddess|Invitation| Lure")>0) ; 
+		return 1
+	if (RegExMatch(name, "Splinter|Shard")>0)
+		return 100
+	if (RegExMatch(name, "Armourer's Scrap|Orb of Regret|Orb of Transmutation|Orb of Unmaking|Scroll")>0)
+		return 40				
+	if (RegExMatch(name, "Orb of Augmentation|Orb of Scouring")>0)
+		return 30				
+	if (RegExMatch(name, "Ancient Orb|Blacksmith's Whetstone|Blessed Orb|Cartographer's Chisel|Chromatic Orb|Engineer's Orb|Gemcutter's Prism|Glassblower's Bauble|Harbinger's Orb|Jeweller's Orb|Orb of Alteration|Orb of Annulment|Orb of Binding|Orb of Horizons|Orb of Fusing|Power Core")>0)
+		return 20				
+	if (RegExMatch(name, "Awakened Sextant|Divine Orb|Charged Compas|Elevated Sextant|Enkindling Orb|Instilling Orb|Orb of Alchemy|Orb of Chance|Regal Orb|Ritual Vessel|Stacked Deck|Surveyor's Compass|Tainted Blessing|Vaal Orb|Veiled Chaos Orb| Recombinator")>0)
+		return 10 ; |Prime Sextant | Scarab| Incubator
+	if (RegExMatch(name, "Lifeforce")>0)
+		return 1000
+	if (RegExMatch(name, "Divine Vessel|Simulacrum|The Maven's Writ")>0)
+		return 1
+	; FAKE!
+	if (RegExMatch(name, "Awakener's Orb|Maven's Orb|Mirror of Kalandra|Oil Extractor|Orb of Conflict|Orb of Dominance|Prime Regrading Lens|Sacred Orb|Secondary Regrading Lens|Tailoring Orb|Tempering Orb")>0)
+		return 1 ; |Kalguuran Delirium Orb
+	AddMessage("Для " . name . " не удалось получить стаки")
+	return 10
+}
+
+GetBuyPrice(data)
+{
+	if (data.pay.pay_currency_id = 1)
+		return data.pay.value
+	if (data.pay.value > 0)
+		return 1/data.pay.value
+	return ""
+}
+GetSellPrice(data)
+{
+	if (data.receive.pay_currency_id = 1)
+		return data.receive.value
+	if (data.receive.value > 0)
+		return 1/data.receive.value
+	return ""
+}
+
+Test(name){
+	global ListThingCurrency
+	q := ListThingCurrency[name]
+	AddMessage(q.name)
+	AddMessage(q.tradeID)
+	AddMessage(q.stackSize)
+	AddMessage(q.shiftBuy)
+	AddMessage(q.shiftSell)
+	AddMessage(q.maxCountBuy)
+	AddMessage(q.maxCountSell)
+	AddMessage(q.centerPrice)
+	AddMessage(q.buyTradePrice)
+	AddMessage(q.sellTradePrice)
+}
+
+
+LoadDataFromFile()
+LoadDataFromUrl()
+
+CleanMessageAndSetTimeout(1000)
+
+~:
+	Test("Divine Orb")
+return
