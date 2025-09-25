@@ -38,3 +38,4 @@ Config := new ConfigClass(ChoosedLeague)
 MsgBox, You choose %ChoosedLeague%
 
 
+
